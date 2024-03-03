@@ -6,6 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
+    # set the DJANGO_SETTINGS_MODULE environment variable to the settings.py file in django_vue_cli module
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_vue_cli.settings")
     try:
         from django.core.management import execute_from_command_line

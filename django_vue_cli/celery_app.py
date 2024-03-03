@@ -27,5 +27,8 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 @app.task(bind=True)
 def debug_task(self):
+    """
+    A debug task that prints the request and sleeps for 2 seconds.
+    """
     print("Request: {!r}".format(self.request))
     time.sleep(2)

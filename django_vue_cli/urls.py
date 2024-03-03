@@ -10,12 +10,12 @@ from applications.user.urls import router as user_router
 from django_vue_cli.views import index
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("", index),
-    re_path(r"^api/", include(task_router.urls)),
-    re_path(r"^rest/", include(subsonic_router.urls)),
-    re_path(r"^user/", include(user_router.urls)),
-    re_path(r"^api/token/", obtain_jwt_token),
+    path("admin/", admin.site.urls),  # admin site url pattern
+    path("", index),  # index view url pattern
+    re_path(r"^api/", include(task_router.urls)),  # task app url pattern
+    re_path(r"^rest/", include(subsonic_router.urls)),  # subsonic app url pattern
+    re_path(r"^user/", include(user_router.urls)),  # user app url pattern
+    re_path(r"^api/token/", obtain_jwt_token),  # jwt token url pattern
     # nginx 处理了静态文件
     re_path(
         r"^static/(?P<path>.*)$",

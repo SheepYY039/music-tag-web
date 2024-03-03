@@ -24,24 +24,27 @@ body ul {
     list-style: none;
 }
 
-
 /*全局滚动条样式*/
 ::-webkit-scrollbar {
     width: 6px;
 }
 
- ::-webkit-scrollbar-thumb { //滑块部分
-/* background-color: #01c8dc;
+::-webkit-scrollbar-thumb {
+    //滑块部分
+    /* background-color: #01c8dc;
 border-radius: 3px; */
     background-color: #c4c6cc;
 }
-::-webkit-scrollbar-track { //轨道部分
-  // background: #ededed;
-  border-radius: 5px;
+::-webkit-scrollbar-track {
+    //轨道部分
+    // background: #ededed;
+    border-radius: 5px;
 }
 
 #app {
-    font-family: PingFang SC, Microsoft Yahei;
+    font-family:
+        PingFang SC,
+        Microsoft Yahei;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     //min-width: 1280px;

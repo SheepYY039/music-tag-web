@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('task', '0003_taskrecord_created_at'),
+        ("task", "0003_taskrecord_created_at"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='taskrecord',
-            name='batch',
-            field=models.CharField(default='', max_length=255),
+            model_name="taskrecord",
+            name="batch",
+            field=models.CharField(default="", max_length=255),
         ),
     ]

@@ -6,7 +6,6 @@ try:
 
     from component.music_tag.id3 import Id3File
 
-
     class WaveId3File(Id3File):
         tag_format = "Wave[Id3]"
         mutagen_kls = mutagen.wave.WAVE
@@ -21,6 +20,6 @@ try:
             #     '#bitspersample': TAG_MAP_ENTRY(getter=lambda afile, norm_key: None,
             #                             type=int),
             # })
-            
+
 except ImportError:
     pass

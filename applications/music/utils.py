@@ -1,6 +1,6 @@
 import os
-import uuid
 import urllib.parse
+import uuid
 
 from django.conf import settings
 from django.utils.deconstruct import deconstructible
@@ -23,7 +23,7 @@ class ChunkedPath:
         self.sanitize_filename(filename)
         uid = str(uuid.uuid4())
         chunk_size = 2
-        chunks = [uid[i: i + chunk_size] for i in range(0, len(uid), chunk_size)]
+        chunks = [uid[i : i + chunk_size] for i in range(0, len(uid), chunk_size)]
         if self.preserve_file_name:
             parts = chunks[:3] + [filename]
         else:
@@ -35,9 +35,9 @@ class ChunkedPath:
 
 def strip_absolute_media_url(path):
     if (
-            settings.MEDIA_URL.startswith("http://")
-            or settings.MEDIA_URL.startswith("https://")
-            and path.startswith(settings.MEDIA_URL)
+        settings.MEDIA_URL.startswith("http://")
+        or settings.MEDIA_URL.startswith("https://")
+        and path.startswith(settings.MEDIA_URL)
     ):
         path = path.replace(settings.MEDIA_URL, "/media/", 1)
     return path

@@ -1,8 +1,15 @@
 # -*- coding: utf-8 -*-
-from component.utils.exceptions import (AuthenticationError, NotAuthenticatedError,
-                                        PermissionDeniedError, MethodNotAllowedError,
-                                        NotAcceptableError, UnsupportedMediaTypeError,
-                                        ThrottledError, ParamValidationError, ResourceNotFound)
+from component.utils.exceptions import (
+    AuthenticationError,
+    MethodNotAllowedError,
+    NotAcceptableError,
+    NotAuthenticatedError,
+    ParamValidationError,
+    PermissionDeniedError,
+    ResourceNotFound,
+    ThrottledError,
+    UnsupportedMediaTypeError,
+)
 
 # drf exception to blueapps exception
 exception_mapping = {
@@ -14,5 +21,5 @@ exception_mapping = {
     "MethodNotAllowed": MethodNotAllowedError,
     "NotAcceptable": NotAcceptableError,
     "UnsupportedMediaType": UnsupportedMediaTypeError,
-    "Throttled": ThrottledError
+    "Throttled": ThrottledError,
 }

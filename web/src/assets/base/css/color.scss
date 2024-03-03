@@ -1,50 +1,47 @@
 // 基础颜色统一配置
-$head-theme: 'light'; //选择 light 或 blue
+$head-theme: "light"; //选择 light 或 blue
 $headerHeight: 60px;
 
-$base-color: #217FC3; //导航主⾊ 导航⽂字 重要按钮 链接⽂本
-$base-hover: #446DB3; //主色hover
+$base-color: #217fc3; //导航主⾊ 导航⽂字 重要按钮 链接⽂本
+$base-hover: #446db3; //主色hover
 
-$base-color-blue: #BFE3EB; //蓝色主题的导航主⾊ 导航⽂字 重要按钮 链接⽂本
+$base-color-blue: #bfe3eb; //蓝色主题的导航主⾊ 导航⽂字 重要按钮 链接⽂本
 
-$primary-color: #3EC8FF; //次要按钮
-$primary-hover: #44B3E0; //hover
+$primary-color: #3ec8ff; //次要按钮
+$primary-hover: #44b3e0; //hover
 
-$success-color: #5BD18B; //操作成功 谨慎使⽤ 成功信息
-$success-hover: #4CAA72; //hover
+$success-color: #5bd18b; //操作成功 谨慎使⽤ 成功信息
+$success-hover: #4caa72; //hover
 
-$warn-color: #FEA30D; //警告，谨慎使用
-$warn-hover: #Ec9300; //hover
+$warn-color: #fea30d; //警告，谨慎使用
+$warn-hover: #ec9300; //hover
 
-$error-color: #ED3F3F; //操作警告 信息提醒 失败信息
-$error-hover: #Dd2424; //hover
+$error-color: #ed3f3f; //操作警告 信息提醒 失败信息
+$error-hover: #dd2424; //hover
 
-$cancel-color: #C9C9C9; //取消选择 边框颜⾊
-$cancel-hover: #A9A9A9; //hover
+$cancel-color: #c9c9c9; //取消选择 边框颜⾊
+$cancel-hover: #a9a9a9; //hover
 
-$nav-color: #90BFE1; //导航hover
+$nav-color: #90bfe1; //导航hover
 
-$sup-color: #F4F9FA; //辅色
+$sup-color: #f4f9fa; //辅色
 
-$dis-color: #EEE; //禁用按钮 弱分割线
+$dis-color: #eee; //禁用按钮 弱分割线
 
-$bg-color: #FBFBFB; //主背景色，列表分割底色
+$bg-color: #fbfbfb; //主背景色，列表分割底色
 
-$bg-sup: #EDEDED; //辅助背景色
+$bg-sup: #ededed; //辅助背景色
 
-$split-color: #B5B5B5; //tab按钮，强分割线
+$split-color: #b5b5b5; //tab按钮，强分割线
 
 $font-color: #333; //主要⽂字 导航默认⽂字 标题⽂字
 
-$font-second: #4D4D4D; //⼆级标题 重要提⽰
+$font-second: #4d4d4d; //⼆级标题 重要提⽰
 
 $font-third: #666; //⼆级标题 列表标题
 
 $text-color: #999; //正⽂颜⾊ 辅助信息 ⽂本框默认内容
 
-$note-color: #FF2424; //注释、 提醒
+$note-color: #ff2424; //注释、 提醒
 
 $white-color: #fff; //白色
-
-
-

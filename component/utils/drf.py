@@ -14,7 +14,9 @@ def format_validation_message(e):
                 try:
                     messages.append("{}:{}".format(k, ",".join(v)))
                 except TypeError:
-                    messages.append("{}:{}".format(k, "部分列表元素的参数不合法，请检查"))
+                    messages.append(
+                        "{}:{}".format(k, "部分列表元素的参数不合法，请检查")
+                    )
             else:
                 messages.append("{}:{}".format(k, v))
         message = ";".join(messages)

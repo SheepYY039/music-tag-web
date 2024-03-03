@@ -15,9 +15,7 @@ NB_COMPILE_JOBS = multiprocessing.cpu_count()
 # set up logging
 logger = logging.getLogger("encrypt-py")
 
-format_string = (
-    "%(asctime)s|%(levelname)s| %(message)s"
-)
+format_string = "%(asctime)s|%(levelname)s| %(message)s"
 formatter = logging.Formatter(format_string, datefmt="%Y-%m-%dT%H:%M:%S")
 handler = logging.StreamHandler()
 handler.setFormatter(formatter)
@@ -31,8 +29,18 @@ def walk_file(file_path, endfix=".py"):
     if os.path.isdir(file_path):
         for current_path, sub_folders, files_name in os.walk(file_path):
             base_name = os.path.basename(current_path)
-            if base_name in ["migrations", "compose", "lib", "media", "requirements", "static", "templates", "tests",
-                             "web", "translators"]:
+            if base_name in [
+                "migrations",
+                "compose",
+                "lib",
+                "media",
+                "requirements",
+                "static",
+                "templates",
+                "tests",
+                "web",
+                "translators",
+            ]:
                 continue
             if "/web/" in current_path:
                 continue
@@ -101,7 +109,9 @@ def encrypt_py(py_files: list):
             try:
                 file_name = os.path.basename(py_file)
 
-                logger.debug("encrypted pending {}/{},  {}".format(i + 1, total_count, file_name))
+                logger.debug(
+                    "encrypted pending {}/{},  {}".format(i + 1, total_count, file_name)
+                )
 
                 setup(
                     ext_modules=cythonize([py_file], quiet=True, language_level=3),
@@ -154,6 +164,6 @@ class Command(BaseCommand):
             pool.map(run_work, extensions)
             pool.close()
             pool.join()
-            print('All processes finished')
+            print("All processes finished")
         rename_excrypted_file(encode_dir)
         delete_folder(encode_dir)

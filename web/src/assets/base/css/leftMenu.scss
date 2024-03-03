@@ -4,7 +4,8 @@
     background-color: $base-color !important;
 }
 
-.ivu-menu-vertical .ivu-menu-item:hover, .ivu-menu-vertical .ivu-menu-submenu-title:hover {
+.ivu-menu-vertical .ivu-menu-item:hover,
+.ivu-menu-vertical .ivu-menu-submenu-title:hover {
     color: $base-color;
 }
 
@@ -26,7 +27,8 @@
     margin: 0 !important;
 }
 
-.ivu-menu-submenu-title span > i, .ivu-menu-submenu-title > i {
+.ivu-menu-submenu-title span > i,
+.ivu-menu-submenu-title > i {
     margin: 0 !important;
     padding-right: 5px !important;
 }
@@ -69,14 +71,16 @@
 
 .seOpen {
     color: #fff !important;
-    background-color: #217FC3 !important;
+    background-color: #217fc3 !important;
 }
 
-.ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu):after {
+.ivu-menu-light.ivu-menu-vertical
+    .ivu-menu-item-active:not(.ivu-menu-submenu):after {
     background: none !important;
 }
 
-.el-submenu__title:hover, .el-menu-item:hover {
+.el-submenu__title:hover,
+.el-menu-item:hover {
     color: $base-color;
 
     i {
@@ -103,7 +107,8 @@
     }
 }
 
-.el-submenu__title.is-active, .el-menu-item.is-active {
+.el-submenu__title.is-active,
+.el-menu-item.is-active {
     color: $white-color;
 
     i {
@@ -111,7 +116,8 @@
     }
 }
 
-.el-menu-item, .el-submenu__title {
+.el-menu-item,
+.el-submenu__title {
     height: 42px;
     line-height: 42px;
 }

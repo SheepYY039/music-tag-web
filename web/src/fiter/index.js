@@ -1,1 +1,1 @@
-import './validator/validator'
+import "./validator/validator";

@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   django:
@@ -22,7 +22,7 @@ services:
     container_name: music_celeryworker
     environment:
       dockerrun: "yes"
-    ports: [ ]
+    ports: []
     volumes:
       - D:\:/app/media:z # 配置本地音乐文件夹
     depends_on:
@@ -36,7 +36,7 @@ services:
     container_name: music_celerybeat
     environment:
       dockerrun: "yes"
-    ports: [ ]
+    ports: []
     depends_on:
       - redis
       - db

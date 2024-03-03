@@ -1,13 +1,13 @@
 import base64
 import os
 
-from component import music_tag
 from mutagen.flac import VCFLACDict
-from mutagen.id3 import TXXX, ID3
+from mutagen.id3 import ID3, TXXX
 
 from applications.task.models import Task
 from applications.utils.constant_template import ConstantTemplate
 from applications.utils.send import send
+from component import music_tag
 
 
 def update_music_info(music_id3_info, is_raw_thumbnail=False):
@@ -16,11 +16,14 @@ def update_music_info(music_id3_info, is_raw_thumbnail=False):
         save_music(f, each, is_raw_thumbnail)
         parent_path = os.path.dirname(each["file_full_path"])
         filename = os.path.basename(each["file_full_path"])
-        Task.objects.update_or_create(full_path=each["file_full_path"], defaults={
-            "state": "success",
-            "parent_path": parent_path,
-            "filename": filename
-        })
+        Task.objects.update_or_create(
+            full_path=each["file_full_path"],
+            defaults={
+                "state": "success",
+                "parent_path": parent_path,
+                "filename": filename,
+            },
+        )
 
 
 def save_music(f, each, is_raw_thumbnail):
@@ -49,12 +52,16 @@ def save_music(f, each, is_raw_thumbnail):
             f["album"] = each["album"]
     if each.get("albumartist", None):
         if "${" in each["albumartist"]:
-            f["albumartist"] = ConstantTemplate(each["albumartist"]).resolve_data(var_dict)
+            f["albumartist"] = ConstantTemplate(each["albumartist"]).resolve_data(
+                var_dict
+            )
         else:
             f["albumartist"] = each["albumartist"]
     if each.get("discnumber", None):
         if "${" in each["discnumber"]:
-            f["discnumber"] = ConstantTemplate(each["discnumber"]).resolve_data(var_dict)
+            f["discnumber"] = ConstantTemplate(each["discnumber"]).resolve_data(
+                var_dict
+            )
         else:
             try:
                 f["discnumber"] = int(each["discnumber"].split("/")[0].strip())
@@ -62,7 +69,9 @@ def save_music(f, each, is_raw_thumbnail):
                 f["discnumber"] = 0
     if each.get("tracknumber", None):
         if "${" in each["tracknumber"]:
-            f["tracknumber"] = ConstantTemplate(each["tracknumber"]).resolve_data(var_dict)
+            f["tracknumber"] = ConstantTemplate(each["tracknumber"]).resolve_data(
+                var_dict
+            )
         else:
             try:
                 f["tracknumber"] = int(each["tracknumber"].split("/")[0].strip())
@@ -75,14 +84,18 @@ def save_music(f, each, is_raw_thumbnail):
     if each.get("lyrics", None):
         f["lyrics"] = each["lyrics"]
         if each.get("is_save_lyrics_file", False):
-            lyrics_file_path = f"{os.path.dirname(each['file_full_path'])}/{base_filename}.lrc"
+            lyrics_file_path = (
+                f"{os.path.dirname(each['file_full_path'])}/{base_filename}.lrc"
+            )
             with open(lyrics_file_path, "w", encoding="utf-8") as f_lyc:
                 f_lyc.write(each["lyrics"])
     else:
         if each.get("lyrics") is not None:
             f.remove_tag("lyrics")
         if each.get("is_save_lyrics_file", False):
-            lyrics_file_path = f"{os.path.dirname(each['file_full_path'])}/cover-{base_filename}.lrc"
+            lyrics_file_path = (
+                f"{os.path.dirname(each['file_full_path'])}/cover-{base_filename}.lrc"
+            )
             if not os.path.exists(lyrics_file_path):
                 with open(lyrics_file_path, "w", encoding="utf-8") as f_lyc2:
                     f_lyc2.write(f["lyrics"].value)
@@ -98,9 +111,9 @@ def save_music(f, each, is_raw_thumbnail):
             else:
                 img_content = base64.b64decode(each["album_img"])
             if img_content:
-                f['artwork'] = img_content
+                f["artwork"] = img_content
                 if each.get("is_save_album_cover", False):
-                    format_str = f['artwork'].value.format
+                    format_str = f["artwork"].value.format
                     album_cover_path = f"{os.path.dirname(each['file_full_path'])}/cover-{f['album']}.{format_str}"
                     if os.path.exists(album_cover_path):
                         os.remove(album_cover_path)
@@ -108,35 +121,35 @@ def save_music(f, each, is_raw_thumbnail):
                         with open(album_cover_path, "wb") as f_img:
                             f_img.write(img_content)
                 if len(img_content) / 1024 / 1024 > 5:
-                    f['artwork'] = f['artwork'].first.raw_thumbnail([2048, 2048])
+                    f["artwork"] = f["artwork"].first.raw_thumbnail([2048, 2048])
                 if is_raw_thumbnail:
-                    f['artwork'] = f['artwork'].first.raw_thumbnail([2048, 2048])
+                    f["artwork"] = f["artwork"].first.raw_thumbnail([2048, 2048])
         except Exception as e:
             print(e)
             pass
     else:
         if each.get("is_save_album_cover", False):
-            format_str = f['artwork'].value.format
+            format_str = f["artwork"].value.format
             album_cover_path = f"{os.path.dirname(each['file_full_path'])}/cover-{f['album']}.{format_str}"
             if not os.path.exists(album_cover_path):
                 with open(album_cover_path, "wb") as f_img:
-                    f_img.write(f['artwork'].value.raw)
+                    f_img.write(f["artwork"].value.raw)
     if each.get("album_type", None):
         if isinstance(f.mfile.tags, VCFLACDict):
             f.mfile.tags["RELEASETYPE"] = each["album_type"]
         elif isinstance(f.mfile.tags, ID3):
-            f.mfile.tags["MusicBrainz Album Type"] = TXXX(encoding=3,
-                                                          desc="MusicBrainz Album Type",
-                                                          text=each["album_type"])
+            f.mfile.tags["MusicBrainz Album Type"] = TXXX(
+                encoding=3, desc="MusicBrainz Album Type", text=each["album_type"]
+            )
         else:
             raise Exception("未知的音乐文件类型")
     if each.get("language", None):
         if isinstance(f.mfile.tags, VCFLACDict):
             f.mfile.tags["LANGUAGE"] = each["language"]
         elif isinstance(f.mfile.tags, ID3):
-            f.mfile.tags["LANGUAGE"] = TXXX(encoding=3,
-                                            desc="LANGUAGE",
-                                            text=each["language"])
+            f.mfile.tags["LANGUAGE"] = TXXX(
+                encoding=3, desc="LANGUAGE", text=each["language"]
+            )
         else:
             f.mfile.tags["LANGUAGE"] = each["language"]
     f.save()

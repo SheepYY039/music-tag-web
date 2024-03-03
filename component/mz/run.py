@@ -3,10 +3,12 @@ import sys
 
 from django.conf import settings
 
-if sys.platform == 'darwin':
+if sys.platform == "darwin":
     os.environ["FPCALC"] = os.path.join(settings.BASE_DIR, "component", "mz", "fpcalc")
 else:
-    os.environ["FPCALC"] = os.path.join(settings.BASE_DIR, "component", "mz", "fpcalc_linux")
+    os.environ["FPCALC"] = os.path.join(
+        settings.BASE_DIR, "component", "mz", "fpcalc_linux"
+    )
 
 from component.mz import acoustid
 

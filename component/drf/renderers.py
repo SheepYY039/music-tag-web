@@ -26,7 +26,9 @@ class CustomRenderer(JSONRenderer):
                     try:
                         messages.append("{}:{}".format(k, ",".join(v)))
                     except TypeError:
-                        messages.append("{}:{}".format(k, "部分列表元素的参数不合法，请检查"))
+                        messages.append(
+                            "{}:{}".format(k, "部分列表元素的参数不合法，请检查")
+                        )
                 else:
                     messages.append("{}:{}".format(k, v))
             message = ";".join(messages)
@@ -42,7 +44,10 @@ class CustomRenderer(JSONRenderer):
         response = renderer_context.get("response")
 
         # 更改删除成功的状态码, 204 --> 200
-        if response.status_code == status.HTTP_204_NO_CONTENT and request.method == "DELETE":
+        if (
+            response.status_code == status.HTTP_204_NO_CONTENT
+            and request.method == "DELETE"
+        ):
             response.status_code = status.HTTP_200_OK
 
         # 重新构建返回的JSON字典
@@ -57,8 +62,12 @@ class CustomRenderer(JSONRenderer):
             ret = {
                 "result": False,
                 "code": str((response.status_code if response else 500) * 100),
-                "message": self._format_validation_message(detail=data.get("detail", "") or data),
+                "message": self._format_validation_message(
+                    detail=data.get("detail", "") or data
+                ),
                 "data": data,
             }
         # 返回JSON数据
-        return super(CustomRenderer, self).render(ret, accepted_media_type, renderer_context)
+        return super(CustomRenderer, self).render(
+            ret, accepted_media_type, renderer_context
+        )

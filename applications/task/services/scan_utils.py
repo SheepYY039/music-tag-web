@@ -1,16 +1,17 @@
-from applications.music.models import Folder, Attachment
-from component import music_tag
-from django.conf import settings
-import time
-from applications.music.models import Folder, Track, Album, Artist, Genre
-from applications.subsonic.constants import AUDIO_EXTENSIONS_AND_MIMETYPE, COVER_TYPE
-from django_vue_cli.celery_app import app
-import os
-import uuid
-from django.core.files.base import ContentFile
 import io
+import os
+import time
+import uuid
+
+from django.conf import settings
 from django.core.files import File  # you need this somewhere
+from django.core.files.base import ContentFile
 from PIL import Image
+
+from applications.music.models import Album, Artist, Attachment, Folder, Genre, Track
+from applications.subsonic.constants import AUDIO_EXTENSIONS_AND_MIMETYPE, COVER_TYPE
+from component import music_tag
+from django_vue_cli.celery_app import app
 
 
 class MusicInfo:
@@ -86,7 +87,7 @@ class MusicInfo:
 
     @property
     def duration(self):
-        return self.file['#length'].value
+        return self.file["#length"].value
 
     @property
     def size(self):
@@ -94,34 +95,34 @@ class MusicInfo:
 
     @property
     def suffix(self):
-        return self.file['#codec'].value
+        return self.file["#codec"].value
 
     @property
     def bit_rate(self):
-        return self.file['#bitrate'].value
+        return self.file["#bitrate"].value
 
     @property
     def track_number(self):
         try:
-            return self.file['tracknumber'].value
+            return self.file["tracknumber"].value
         except Exception:
             return 1
 
     @property
     def disc_number(self):
         try:
-            return self.file['discnumber'].value
+            return self.file["discnumber"].value
         except Exception:
             return 1
 
     @property
     def title(self):
-        return self.file['title'].value
+        return self.file["title"].value
 
     @property
     def artwork(self):
         try:
-            return self.file['artwork'].value
+            return self.file["artwork"].value
         except Exception:
             return ""
 
@@ -149,15 +150,19 @@ class ScanMusic:
         self.genre_map = {k.upper(): v for k, v in genre_map.items()}
 
     def get_scan_list(self):
-        music_list = Folder.objects.filter(file_type="music", state__in=["none", "updated"]).all()
+        music_list = Folder.objects.filter(
+            file_type="music", state__in=["none", "updated"]
+        ).all()
         return music_list
 
     def get_or_create_artist(self, music_info):
         artist_name = music_info.artist_name
         if artist_name not in self.artist_map:
-            artist = Artist.objects.create(**{
-                "name": artist_name,
-            })
+            artist = Artist.objects.create(
+                **{
+                    "name": artist_name,
+                }
+            )
             self.artist_map[artist_name] = artist.id
         return self.artist_map[artist_name]
 
@@ -171,14 +176,16 @@ class ScanMusic:
 
         if full_text not in self.album_map:
             artist_id = self.artist_map[artist_name]
-            album = Album.objects.create(**{
-                "name": album_name,
-                "artist_id": artist_id,
-                "max_year": year,
-                "genre_id": self.genre_map[genre],
-                "comment": comment,
-                "full_text": full_text
-            })
+            album = Album.objects.create(
+                **{
+                    "name": album_name,
+                    "artist_id": artist_id,
+                    "max_year": year,
+                    "genre_id": self.genre_map[genre],
+                    "comment": comment,
+                    "full_text": full_text,
+                }
+            )
             self.album_map[full_text] = album.id
         else:
             album = Album.objects.filter(id=self.album_map[full_text]).first()
@@ -188,34 +195,43 @@ class ScanMusic:
         genre_name = music_info.genre
 
         if genre_name not in self.genre_map:
-            genre = Genre.objects.create(**{
-                "name": genre_name,
-            })
+            genre = Genre.objects.create(
+                **{
+                    "name": genre_name,
+                }
+            )
             self.genre_map[genre_name] = genre.id
         return self.genre_map[genre_name]
 
     def get_or_create_attachment(self, music_info, album):
         if album.attachment_cover is None:
-            folder = Folder.objects.filter(file_type="image", parent_id=music_info.parent_id,
-                                           name__startswith="cover.").first()
+            folder = Folder.objects.filter(
+                file_type="image",
+                parent_id=music_info.parent_id,
+                name__startswith="cover.",
+            ).first()
             if folder:
                 image_path = folder.path
                 with open(image_path, "rb") as f:
                     image_data = f.read()
-                    at = Attachment.objects.create(**{
-                        "size": len(image_data),
-                        "mimetype": f"image/{folder.name.split('.')[-1]}",
-                    })
+                    at = Attachment.objects.create(
+                        **{
+                            "size": len(image_data),
+                            "mimetype": f"image/{folder.name.split('.')[-1]}",
+                        }
+                    )
                     at.file.save(f"{album.name}.jpg", ContentFile(image_data), True)
                     album.attachment_cover = at
                     album.save()
             else:
                 artwork = music_info.artwork
                 if artwork:
-                    at = Attachment.objects.create(**{
-                        "size": len(artwork.raw),
-                        "mimetype": artwork.mime,
-                    })
+                    at = Attachment.objects.create(
+                        **{
+                            "size": len(artwork.raw),
+                            "mimetype": artwork.mime,
+                        }
+                    )
                     at.file.save(f"{album.name}.jpg", ContentFile(artwork.raw), True)
 
                     album.attachment_cover = at
@@ -239,7 +255,12 @@ class ScanMusic:
                 genre_id = self.get_or_create_genre(music_info)
                 album = self.get_or_create_album(music_info)
                 self.get_or_create_attachment(music_info, album)
-                self.update_or_create_track(music_info, album_id=album.id, artist_id=artist_id, genre_id=genre_id)
+                self.update_or_create_track(
+                    music_info,
+                    album_id=album.id,
+                    artist_id=artist_id,
+                    genre_id=genre_id,
+                )
                 folder.state = "scanned"
                 folder.save()
             except Exception as e:

@@ -4,7 +4,6 @@ import xml.etree.ElementTree as ET
 from rest_framework import renderers
 
 
-
 # from https://stackoverflow.com/a/8915039
 # because I want to avoid a lxml dependency just for outputting cdata properly
 # in a RSS feed

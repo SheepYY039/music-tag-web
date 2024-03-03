@@ -4,21 +4,20 @@ import time
 
 import requests
 
-
 from component import translators as ts
 
 
 def translation_lyc_text(contents):
     if len(contents) > 1000:
         results = []
-        contents = contents.split('\n')
+        contents = contents.split("\n")
         content_1k = ""
         for each in contents:
-            if len(content_1k + each + '\n') > 1000:
+            if len(content_1k + each + "\n") > 1000:
                 results.append(content_1k)
-                content_1k = each + '\n'
+                content_1k = each + "\n"
             else:
-                content_1k += each + '\n'
+                content_1k += each + "\n"
         if content_1k:
             results.append(content_1k)
         translate_res = ""
@@ -33,4 +32,3 @@ def translation_lyc_text(contents):
         res = ts.translate_text(contents, translator="youdao", to_language="zh-CHS")
         print(res)
         return res
-

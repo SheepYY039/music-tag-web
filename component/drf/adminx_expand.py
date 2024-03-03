@@ -30,5 +30,3 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         return super().formfield_for_manytomany(
             db_field, request, using=self.using, **kwargs
         )
-
-

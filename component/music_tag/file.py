@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 
-from collections import namedtuple
 import hashlib
 import io
 import shutil
+from collections import namedtuple
 
 import mutagen
 from mutagen.id3 import PictureType
+
 try:
     import PIL
     from PIL import Image
+
     BICUBIC = PIL.Image.BICUBIC
     _HAS_PIL = True
 except ImportError:
@@ -20,39 +22,46 @@ from component.music_tag import util
 
 
 def getter_not_implemented(afile, norm_key):
-    raise NotImplementedError("getter: '{0}' not implemented for {1}"
-                              "".format(norm_key, type(afile)))
+    raise NotImplementedError(
+        "getter: '{0}' not implemented for {1}" "".format(norm_key, type(afile))
+    )
+
 
 def setter_not_implemented(afile, norm_key, val):
-    raise NotImplementedError("setter: '{0}' not implemented for {1}"
-                              "".format(norm_key, type(afile)))
+    raise NotImplementedError(
+        "setter: '{0}' not implemented for {1}" "".format(norm_key, type(afile))
+    )
+
 
 def albumartist_from_comp(afile, norm_key):
     ret = None
-    if afile.get('compilation', default=None):
-        ret = 'Various Artists'
+    if afile.get("compilation", default=None):
+        ret = "Various Artists"
     return ret
+
 
 def comp_from_albumartist(afile, norm_key):
     ret = None
-    albumartist = afile.get('albumartist', default=None)
+    albumartist = afile.get("albumartist", default=None)
     if albumartist:
-        albumartist = albumartist.first.lower().replace(' ', '')
-        if albumartist in ('various', 'variousartists'):
+        albumartist = albumartist.first.lower().replace(" ", "")
+        if albumartist in ("various", "variousartists"):
             ret = True
         else:
             ret = False
     return ret
 
 
-TAG_MAP_ENTRY = namedtuple('TAG_MAP_ENTRY', ('getter', 'setter', 'remover',
-                                             'type', 'sanitizer'))
-TAG_MAP_ENTRY.__new__.__defaults__ = (getter_not_implemented,  # getter
-                                      setter_not_implemented,  # setter
-                                      None,  # remover
-                                      str,  # type
-                                      None,  # sanitizer
-                                      )
+TAG_MAP_ENTRY = namedtuple(
+    "TAG_MAP_ENTRY", ("getter", "setter", "remover", "type", "sanitizer")
+)
+TAG_MAP_ENTRY.__new__.__defaults__ = (
+    getter_not_implemented,  # getter
+    setter_not_implemented,  # setter
+    None,  # remover
+    str,  # type
+    None,  # sanitizer
+)
 
 
 class MetadataItem(object):
@@ -69,6 +78,7 @@ class MetadataItem(object):
     @property
     def ismissing(self):
         return bool(self.values)
+
     @property
     def isna(self):
         return bool(self.values)
@@ -76,6 +86,7 @@ class MetadataItem(object):
     @property
     def values(self):
         return self._values
+
     @values.setter
     def values(self, val):
         if isinstance(val, (list, tuple)):
@@ -110,6 +121,7 @@ class MetadataItem(object):
                 raise ValueError("Multiple values exist: {0}".format(repr(values)))
             val = values[0]
         return val
+
     @property
     def val(self):
         return self.value
@@ -136,7 +148,7 @@ class MetadataItem(object):
         return len(self._values)
 
     def __str__(self):
-        return ', '.join(str(li) for li in self._values)
+        return ", ".join(str(li) for li in self._values)
 
     def __int__(self):
         if not self._values:
@@ -157,12 +169,19 @@ class MetadataItem(object):
         return tuple(self._values)
 
     def __repr__(self):
-        return '<MetadataItem: {0}>'.format(self.__str__())
+        return "<MetadataItem: {0}>".format(self.__str__())
 
 
 class Artwork(object):
-    def __init__(self, raw, width=None, height=None, fmt=None, depth=None,
-                 pic_type=PictureType.COVER_FRONT):
+    def __init__(
+        self,
+        raw,
+        width=None,
+        height=None,
+        fmt=None,
+        depth=None,
+        pic_type=PictureType.COVER_FRONT,
+    ):
         if isinstance(raw, Artwork):
             orig = raw
             raw = orig.raw
@@ -182,8 +201,17 @@ class Artwork(object):
                 width = img.width
                 height = img.height
                 fmt = img.format.lower()
-                mode2depth = {'1': 1, 'L': 8, 'P': 8, 'RGB': 24, 'RGBA': 32,
-                              'CMYK': 32, 'YCbCr': 24, 'I': 32, 'F': 32}
+                mode2depth = {
+                    "1": 1,
+                    "L": 8,
+                    "P": 8,
+                    "RGB": 24,
+                    "RGBA": 32,
+                    "CMYK": 32,
+                    "YCbCr": 24,
+                    "I": 32,
+                    "F": 32,
+                }
                 depth = mode2depth[img.mode]
             except ImportError:
                 width = None
@@ -220,8 +248,9 @@ class Artwork(object):
         image.thumbnail(size, method)
         return image
 
-    def raw_thumbnail(self, size, method=BICUBIC, format=None, quality=95,
-                      return_info=False):
+    def raw_thumbnail(
+        self, size, method=BICUBIC, format=None, quality=95, return_info=False
+    ):
         thumb = self.thumbnail(size, method=method)
         if format is None:
             format = thumb.format
@@ -231,7 +260,7 @@ class Artwork(object):
             raw = output.getvalue()
 
         if return_info:
-            info = {'width': thumb.width, 'height': thumb.height}
+            info = {"width": thumb.width, "height": thumb.height}
             return raw, info
         else:
             return raw
@@ -239,8 +268,9 @@ class Artwork(object):
     def __str__(self):
         md5 = hashlib.md5()
         md5.update(self.data)
-        return "{0} {1}x{2} {3}".format(self.mime, self.width, self.height,
-                                        md5.hexdigest())
+        return "{0} {1}x{2} {3}".format(
+            self.mime, self.width, self.height, md5.hexdigest()
+        )
 
 
 class RawProxy(object):
@@ -269,6 +299,7 @@ class RawProxy(object):
 
     def __getitem__(self, norm_key):
         return self.get(norm_key, default=None)
+
     def __setitem__(self, norm_key, val):
         self.set(norm_key, val)
 
@@ -285,62 +316,62 @@ class AudioFile(object):
 
     # The _DEFAULT_* attributes should not be overridden in subclasses
     _DEFAULT_TAG_ALIASES = {
-        'title': 'tracktitle',
-        'name': 'tracktitle',
-        'disknumber': 'discnumber',
-        'totaldisks': 'totaldiscs',
+        "title": "tracktitle",
+        "name": "tracktitle",
+        "disknumber": "discnumber",
+        "totaldisks": "totaldiscs",
     }
 
     _DEFAULT_TAG_MAP = {
-        'tracktitle': TAG_MAP_ENTRY(type=str),
-        'artist': TAG_MAP_ENTRY(type=str),
-        'album': TAG_MAP_ENTRY(type=str),
-        'albumartist': TAG_MAP_ENTRY(type=str),
-        'composer': TAG_MAP_ENTRY(type=str),
-        'tracknumber': TAG_MAP_ENTRY(type=int),
-        'totaltracks': TAG_MAP_ENTRY(type=int),
-        'discnumber': TAG_MAP_ENTRY(type=int),
-        'totaldiscs': TAG_MAP_ENTRY(type=int),
-        'genre': TAG_MAP_ENTRY(type=str),
-        'year': TAG_MAP_ENTRY(type=int, sanitizer=util.sanitize_year),
-        'compilation': TAG_MAP_ENTRY(type=bool),
-        'lyrics': TAG_MAP_ENTRY(type=str),
-        'isrc': TAG_MAP_ENTRY(type=str),
-        'comment': TAG_MAP_ENTRY(type=str),
-
-        'artwork': TAG_MAP_ENTRY(type=Artwork),
-
-        '#bitrate': TAG_MAP_ENTRY(getter='bitrate', type=int),
-        '#codec': TAG_MAP_ENTRY(getter='codec', type=str),
-        '#length': TAG_MAP_ENTRY(getter='length', type=float),
-        '#channels': TAG_MAP_ENTRY(getter='channels', type=int),
-        '#bitspersample': TAG_MAP_ENTRY(getter='bits_per_sample', type=int),
-        '#samplerate': TAG_MAP_ENTRY(getter='sample_rate', type=int),
+        "tracktitle": TAG_MAP_ENTRY(type=str),
+        "artist": TAG_MAP_ENTRY(type=str),
+        "album": TAG_MAP_ENTRY(type=str),
+        "albumartist": TAG_MAP_ENTRY(type=str),
+        "composer": TAG_MAP_ENTRY(type=str),
+        "tracknumber": TAG_MAP_ENTRY(type=int),
+        "totaltracks": TAG_MAP_ENTRY(type=int),
+        "discnumber": TAG_MAP_ENTRY(type=int),
+        "totaldiscs": TAG_MAP_ENTRY(type=int),
+        "genre": TAG_MAP_ENTRY(type=str),
+        "year": TAG_MAP_ENTRY(type=int, sanitizer=util.sanitize_year),
+        "compilation": TAG_MAP_ENTRY(type=bool),
+        "lyrics": TAG_MAP_ENTRY(type=str),
+        "isrc": TAG_MAP_ENTRY(type=str),
+        "comment": TAG_MAP_ENTRY(type=str),
+        "artwork": TAG_MAP_ENTRY(type=Artwork),
+        "#bitrate": TAG_MAP_ENTRY(getter="bitrate", type=int),
+        "#codec": TAG_MAP_ENTRY(getter="codec", type=str),
+        "#length": TAG_MAP_ENTRY(getter="length", type=float),
+        "#channels": TAG_MAP_ENTRY(getter="channels", type=int),
+        "#bitspersample": TAG_MAP_ENTRY(getter="bits_per_sample", type=int),
+        "#samplerate": TAG_MAP_ENTRY(getter="sample_rate", type=int),
     }
 
     _DEFAULT_RESOLVERS = {
-        'albumartist': ('albumartist', albumartist_from_comp, 'artist'),
-        'artist': ('artist', 'albumartist'),
-        'compilation': ('compilation', comp_from_albumartist),
-        'discnumber': ('discnumber',
-                       lambda afile, norm_key: 1
-                       ),
-        'totaldiscs': ('totaldiscs',
-                       lambda afile, norm_key: afile.get('discnumber', 1)
-                       ),
+        "albumartist": ("albumartist", albumartist_from_comp, "artist"),
+        "artist": ("artist", "albumartist"),
+        "compilation": ("compilation", comp_from_albumartist),
+        "discnumber": ("discnumber", lambda afile, norm_key: 1),
+        "totaldiscs": (
+            "totaldiscs",
+            lambda afile, norm_key: afile.get("discnumber", 1),
+        ),
     }
 
-    _DEFAULT_SINGULAR_KEYS = ['tracknumber', 'totaltracks',
-                              'discnumber', 'totaldiscs',
-                              'year', 'compilation',
-                              ]
+    _DEFAULT_SINGULAR_KEYS = [
+        "tracknumber",
+        "totaltracks",
+        "discnumber",
+        "totaldiscs",
+        "year",
+        "compilation",
+    ]
 
     # these 3 attributes may be overridden in subclasses
     _TAG_ALIASES = {}
     _TAG_MAP = {}
     _RESOLVERS = {}
     _SINGULAR_KEYS = []
-
 
     def __init__(self, filename, _mfile=None):
         self.tag_aliases = self._DEFAULT_TAG_ALIASES.copy()
@@ -378,7 +409,7 @@ class AudioFile(object):
             self.mfile.save(filename, **kwargs)
 
     def _normalize_norm_key(self, norm_key):
-        norm_key = norm_key.replace(' ', '').replace('_', '').replace('-', '').lower()
+        norm_key = norm_key.replace(" ", "").replace("_", "").replace("-", "").lower()
         if self.tag_aliases and norm_key in self.tag_aliases:
             norm_key = self.tag_aliases[norm_key]
         return norm_key
@@ -392,16 +423,16 @@ class AudioFile(object):
         ret = None
         if norm_key in self.resolvers:
             for resolver in self.resolvers[norm_key]:
-                if hasattr(resolver, '__call__'):
+                if hasattr(resolver, "__call__"):
                     ret = resolver(self, norm_key)
                 else:
-                    ret = self.get(resolver, default=None, _raw_default=True,
-                                   typeless=typeless)
+                    ret = self.get(
+                        resolver, default=None, _raw_default=True, typeless=typeless
+                    )
                 if ret is not None:
                     break
         else:
-            ret = self.get(norm_key, default=None, _raw_default=True,
-                           typeless=typeless)
+            ret = self.get(norm_key, default=None, _raw_default=True, typeless=typeless)
 
         if not (ret is None or isinstance(ret, MetadataItem)):
             ret = MetadataItem(md_type, md_sanitizer, ret)
@@ -421,34 +452,30 @@ class AudioFile(object):
         md_sanitizer = None if typeless else tmap.sanitizer
 
         ret = None
-        if hasattr(tmap.getter, '__call__'):
+        if hasattr(tmap.getter, "__call__"):
             val = tmap.getter(self, norm_key)
-            ret = None if val is None else MetadataItem(md_type, md_sanitizer,
-                                                        val)
-        elif norm_key.startswith('#'):
+            ret = None if val is None else MetadataItem(md_type, md_sanitizer, val)
+        elif norm_key.startswith("#"):
             val = getattr(self.mfile.info, tmap.getter)
             if not typeless:
                 val = tmap.type(val)
-            ret = None if val is None else MetadataItem(md_type, md_sanitizer,
-                                                        val)
+            ret = None if val is None else MetadataItem(md_type, md_sanitizer, val)
         elif isinstance(tmap.getter, (list, tuple)):
             val = None
             for getter in tmap.getter:
                 if val is not None:
                     break
-                if hasattr(getter, '__call__'):
+                if hasattr(getter, "__call__"):
                     val = getter(self, norm_key)
                 elif getter in self.mfile.tags:
                     val = self._ft_getter(getter)
-            ret = None if val is None else MetadataItem(md_type, md_sanitizer,
-                                                        val)
+            ret = None if val is None else MetadataItem(md_type, md_sanitizer, val)
         else:
             try:
                 val = self._ft_getter(tmap.getter)
             except KeyError:
                 val = None
-            ret = None if val is None else MetadataItem(md_type, md_sanitizer,
-                                                        val)
+            ret = None if val is None else MetadataItem(md_type, md_sanitizer, val)
 
         if ret is None:
             if _raw_default:
@@ -473,16 +500,17 @@ class AudioFile(object):
 
         appendable = appendable and norm_key not in self.singular_keys
         if norm_key in self.singular_keys and len(md_val.values) > 1:
-            raise ValueError("Key '{0}' can not have multiple values; {1}"
-                             "".format(norm_key, md_val.values))
+            raise ValueError(
+                "Key '{0}' can not have multiple values; {1}"
+                "".format(norm_key, md_val.values)
+            )
 
         try:
             self._ft_setter(key, md_val, appendable=appendable)
         except (TypeError, ValueError):
             try:
                 v = [str(vi) for vi in md_val.values]
-                self._ft_setter(key, MetadataItem(str, None, v),
-                                appendable=appendable)
+                self._ft_setter(key, MetadataItem(str, None, v), appendable=appendable)
             except Exception:
                 success = False
             else:
@@ -499,16 +527,16 @@ class AudioFile(object):
         if not isinstance(val, MetadataItem):
             val = MetadataItem(md_type, md_sanitizer, val)
 
-        if hasattr(tmap.setter, '__call__'):
+        if hasattr(tmap.setter, "__call__"):
             tmap.setter(self, norm_key, val)
-        elif norm_key.startswith('#'):
+        elif norm_key.startswith("#"):
             raise KeyError("Can not set file info (tags that begin with #)")
         elif isinstance(tmap.setter, (list, tuple)):
             value_set = False
             for setter in tmap.setter:
                 if value_set:
                     break
-                if hasattr(tmap.setter, '__call__'):
+                if hasattr(tmap.setter, "__call__"):
                     tmap.setter(self, norm_key, val)
                     value_set = True
                 elif setter in self.mfile.tags:
@@ -522,11 +550,15 @@ class AudioFile(object):
     def append_tag(self, norm_key, val):
         norm_key = self._normalize_norm_key(norm_key)
         if not self.appendable:
-            raise NotAppendable("{0} can not have multiple values for tags"
-                                "".format(self.__class__.__name__))
+            raise NotAppendable(
+                "{0} can not have multiple values for tags"
+                "".format(self.__class__.__name__)
+            )
         if norm_key in self.singular_keys:
-            raise NotAppendable("{0} can not have multiple values for '{1}'"
-                                "".format(self.__class__.__name__, norm_key))
+            raise NotAppendable(
+                "{0} can not have multiple values for '{1}'"
+                "".format(self.__class__.__name__, norm_key)
+            )
 
         existing_val = self.get(norm_key, default=None)
         if existing_val is None:
@@ -548,9 +580,11 @@ class AudioFile(object):
     def remove_tag(self, norm_key):
         norm_key = self._normalize_norm_key(norm_key)
 
-        if norm_key.startswith('#'):
-            raise KeyError("Can not remove tags that start with '#' since "
-                           "they are not real tags")
+        if norm_key.startswith("#"):
+            raise KeyError(
+                "Can not remove tags that start with '#' since "
+                "they are not real tags"
+            )
 
         tmap = self.tag_map[norm_key]
 
@@ -571,7 +605,7 @@ class AudioFile(object):
                 remover = [tmap.setter]
 
         if remover is not None:
-            if hasattr(remover, '__call__'):
+            if hasattr(remover, "__call__"):
                 remover(self, norm_key)
             elif isinstance(remover, (list, tuple)):
                 for key in remover:
@@ -582,7 +616,7 @@ class AudioFile(object):
     def info(self, tags=None, show_empty=False, resolve=False):
         if not tags:
             tags = self._TAG_MAP.keys()
-        
+
         t_lst = []
         for tag in tags:
             if resolve:
@@ -591,10 +625,9 @@ class AudioFile(object):
                 mdi = self.get(tag, None)
 
             if mdi or show_empty:
-                t_lst.append('{0}: {1}'.format(tag, str(mdi)))
+                t_lst.append("{0}: {1}".format(tag, str(mdi)))
 
-        return '\n'.join(t_lst)
-
+        return "\n".join(t_lst)
 
     def __getitem__(self, norm_key):
         return self.get(norm_key, default=None)
@@ -610,6 +643,7 @@ class AudioFile(object):
 
     def __str__(self):
         return self.info(show_empty=True)
+
 
 ##
 ## EOF

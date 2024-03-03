@@ -5,7 +5,7 @@ import requests
 
 
 def getSignature(text):
-    js_str = '''
+    js_str = """
     function getMD5(a) {
     function b(a) {
         var b = (a >>> 0).toString(16);
@@ -183,17 +183,19 @@ def getSignature(text):
     q && alert("MD5 type mismatch, cannot process " + q),
     o()
 }
-    '''
+    """
     js_obj = execjs.compile(js_str)
-    return js_obj.call('getMD5', text)
+    return js_obj.call("getMD5", text)
 
 
 class KugouClient:
 
     def fetch_lyric(self, song_id):
-        url = f'http://m.kugou.com/app/i/krc.php?cmd=100&timelength=999999&hash={song_id}'
+        url = (
+            f"http://m.kugou.com/app/i/krc.php?cmd=100&timelength=999999&hash={song_id}"
+        )
         html = requests.get(url)
-        html.encoding = 'utf-8'
+        html.encoding = "utf-8"
         txt = html.text
         return txt
 
@@ -208,15 +210,13 @@ class KugouClient:
         json_dict = response.json()
         songs = json_dict.get("data", {}).get("lists")
         for song in songs:
-            artists = song['SingerName'].replace("<em>", "").replace("</em>", "")
+            artists = song["SingerName"].replace("<em>", "").replace("</em>", "")
             song["artist"] = ",".join(artists.split("、"))
-            song["id"] = song['FileHash']
-            song["name"] = song['SongName'].replace("<em>", "").replace("</em>", "")
-            song["artist_id"] = song['SingerId']
-            song["album"] = song['AlbumName']
-            song["album_id"] = song['AlbumID']
-            song["album_img"] = song['Image'].format(size=150)
-            song["year"] = song['PublishTime']
+            song["id"] = song["FileHash"]
+            song["name"] = song["SongName"].replace("<em>", "").replace("</em>", "")
+            song["artist_id"] = song["SingerId"]
+            song["album"] = song["AlbumName"]
+            song["album_id"] = song["AlbumID"]
+            song["album_img"] = song["Image"].format(size=150)
+            song["year"] = song["PublishTime"]
         return songs
-
-

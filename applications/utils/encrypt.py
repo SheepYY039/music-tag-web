@@ -1,8 +1,8 @@
-from json import dumps
-from os import urandom
 from base64 import b64encode
 from binascii import hexlify
 from hashlib import md5
+from json import dumps
+from os import urandom
 
 from Cryptodome.Cipher import AES
 
@@ -18,7 +18,7 @@ MODULUS = (
 PUBKEY = "010001"
 NONCE = b"0CoJUm6Qyw8W8jud"
 LINUXKEY = b"rFgB&h#%2?^eDg:Q"
-EAPIKEY = b'e82ckenh8dichen8'
+EAPIKEY = b"e82ckenh8dichen8"
 
 
 def MD5(value):
@@ -61,7 +61,7 @@ def aes(text, key, method={}):
     if "iv" in method:
         encryptor = AES.new(key, AES.MODE_CBC, b"0102030405060708")
     else:
-        encryptor = AES.new(key,  AES.MODE_ECB)
+        encryptor = AES.new(key, AES.MODE_ECB)
     ciphertext = encryptor.encrypt(text)
     if "base64" in method:
         return b64encode(ciphertext)
@@ -70,8 +70,7 @@ def aes(text, key, method={}):
 
 def rsa(text, pubkey, modulus):
     text = text[::-1]
-    rs = pow(int(hexlify(text), 16),
-             int(pubkey, 16), int(modulus, 16))
+    rs = pow(int(hexlify(text), 16), int(pubkey, 16), int(modulus, 16))
     return format(rs, "x").zfill(256)
 
 

@@ -6,21 +6,29 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('task', '0001_initial'),
+        ("task", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='TaskRecord',
+            name="TaskRecord",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('song_name', models.CharField(default='', max_length=255)),
-                ('artist_name', models.CharField(default='', max_length=255)),
-                ('full_path', models.CharField(default='', max_length=255)),
-                ('tag_source', models.CharField(default='', max_length=255)),
-                ('icon', models.CharField(default='icon-folder', max_length=255)),
-                ('state', models.CharField(default='wait', max_length=255)),
-                ('extra', models.TextField(default='')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("song_name", models.CharField(default="", max_length=255)),
+                ("artist_name", models.CharField(default="", max_length=255)),
+                ("full_path", models.CharField(default="", max_length=255)),
+                ("tag_source", models.CharField(default="", max_length=255)),
+                ("icon", models.CharField(default="icon-folder", max_length=255)),
+                ("state", models.CharField(default="wait", max_length=255)),
+                ("extra", models.TextField(default="")),
             ],
         ),
     ]

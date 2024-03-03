@@ -1,9 +1,9 @@
 import binascii
 import hashlib
 
+from django.contrib.auth import authenticate as django_authenticate
 from django.contrib.auth.models import User
 from rest_framework import authentication, exceptions
-from django.contrib.auth import authenticate as django_authenticate
 
 from applications.user.models import UserProfile
 

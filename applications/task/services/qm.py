@@ -14,7 +14,9 @@ class HttpRequest:
         # 全局唯一Session
         self.__session = requests.Session()
 
-    def getHttp(self, url: str, method: int = 0, data=b"", header=None) -> requests.Response:
+    def getHttp(
+        self, url: str, method: int = 0, data=b"", header=None
+    ) -> requests.Response:
         """
         Http请求-提交二进制流
         Args:
@@ -51,7 +53,7 @@ class HttpRequest:
         if data is None:
             data = {}
         d = json.dumps(data, ensure_ascii=False)
-        d = d.encode('utf-8')
+        d = d.encode("utf-8")
         return self.getHttp(url, method, d, header)
 
     def getSession(self) -> Session:
@@ -76,11 +78,13 @@ class QQMusicApi:
 
     def getHead(self):
         return {
-            "User-Agent": "QQ音乐/73222 CFNetwork/1406.0.2 Darwin/22.4.0".encode("utf-8"),
+            "User-Agent": "QQ音乐/73222 CFNetwork/1406.0.2 Darwin/22.4.0".encode(
+                "utf-8"
+            ),
             "Accept": "*/*",
             "Accept-Language": "zh-CN,zh-Hans;q=0.9",
             "Referer": "http://y.qq.com",
-            'Content-Type': 'application/json; charset=UTF-8',
+            "Content-Type": "application/json; charset=UTF-8",
             "Cookie": self.getCookie(),
         }
 
@@ -101,25 +105,32 @@ class QQMusicApi:
 
     def getQQMusicMediaLyric(self, mid: str) -> dict:
         d = self.getQQServersCallback(
-            "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?g_tk=5381&format=json&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&ct=121&cv=0&songmid=" + mid)
+            "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?g_tk=5381&format=json&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&ct=121&cv=0&songmid="
+            + mid
+        )
         d = d.text
         # self.download_lyric(mid)
         return json.loads(d)
 
     def download_lyric(self, songid):
-        res = requests.get('https://c.y.qq.com/qqmusic/fcgi-bin/lyric_download.fcg', params=dict(
-            version='15',
-            miniversion='82',
-            lrctype='4',
-            musicid=songid,
-        ))
+        res = requests.get(
+            "https://c.y.qq.com/qqmusic/fcgi-bin/lyric_download.fcg",
+            params=dict(
+                version="15",
+                miniversion="82",
+                lrctype="4",
+                musicid=songid,
+            ),
+        )
         print(res)
 
     @staticmethod
     def getUUID():
         return uuid.uuid1().__str__()
 
-    def getQQMusicSearch(self, key: str = "", page: int = 1, size: int = 15) -> (dict, dict):
+    def getQQMusicSearch(
+        self, key: str = "", page: int = 1, size: int = 15
+    ) -> (dict, dict):
         """搜索音乐
 
         参数:
@@ -135,18 +146,12 @@ class QQMusicApi:
         # 一次获取最多获取30条数据 否则返回空列表
         page_per_num = size
         data = {
-            "comm": {
-                "ct": 19, "cv": 1845
-            },
+            "comm": {"ct": 19, "cv": 1845},
             "music.search.SearchCgiService": {
                 "method": "DoSearchForQQMusicDesktop",
                 "module": "music.search.SearchCgiService",
-                "param": {
-                    "query": key,
-                    "num_per_page": page_per_num,
-                    "page_num": page
-                }
-            }
+                "param": {"query": key, "num_per_page": page_per_num, "page_num": page},
+            },
         }
 
         data = {
@@ -168,7 +173,7 @@ class QQMusicApi:
                 "nettype": "2",
                 "psrf_qqunionid": "",
                 "psrf_qqaccess_token": "",
-                "tmeLoginType": "2"
+                "tmeLoginType": "2",
             },
             "music.search.SearchCgiService.DoSearchForQQMusicDesktop": {
                 "module": "music.search.SearchCgiService",
@@ -181,37 +186,43 @@ class QQMusicApi:
                     "query": key,
                     "grp": 1,
                     "searchid": uuid.uuid1().__str__(),
-                    "nqc_flag": 0
-                }
-            }
+                    "nqc_flag": 0,
+                },
+            },
         }
         res = self.QQHttpServer.getHttp2Json(
-            url, 1, data, {
+            url,
+            1,
+            data,
+            {
                 "referer": "https://y.qq.com/portal/profile.html",
                 "Content-Type": "json/application;charset=utf-8",
-                "user-agent": "QQ%E9%9F%B3%E4%B9%90/73222 CFNetwork/1406.0.3 Darwin/22.4.0"
-            })
+                "user-agent": "QQ%E9%9F%B3%E4%B9%90/73222 CFNetwork/1406.0.3 Darwin/22.4.0",
+            },
+        )
         # print(res.text)
         jsons = res.json()
         # 开始解析QQ音乐的搜索结果
-        res = jsons['music.search.SearchCgiService.DoSearchForQQMusicDesktop']['data']
-        lst = res['body']['song']['list']
-        meta = res['meta']
+        res = jsons["music.search.SearchCgiService.DoSearchForQQMusicDesktop"]["data"]
+        lst = res["body"]["song"]["list"]
+        meta = res["meta"]
 
         # 数据清洗,去掉搜索结果中多余的数据
         list_clear = []
         for i in lst:
-            list_clear.append({
-                'album': i['album'],
-                'docid': i['docid'],
-                'id': i['id'],
-                'mid': i['mid'],
-                'name': i['title'],
-                'singer': i['singer'],
-                'time_public': i['time_public'],
-                'title': i['title'],
-                'file': i['file'],
-            })
+            list_clear.append(
+                {
+                    "album": i["album"],
+                    "docid": i["docid"],
+                    "id": i["id"],
+                    "mid": i["mid"],
+                    "name": i["title"],
+                    "singer": i["singer"],
+                    "time_public": i["time_public"],
+                    "title": i["title"],
+                    "file": i["file"],
+                }
+            )
 
         # rebuild json
         # list_clear: 搜索出来的歌曲列表
@@ -221,13 +232,13 @@ class QQMusicApi:
         #   cur  当前搜索结果页码
         # }
         return {
-            'data': list_clear,
-            'page': {
-                'size': meta['sum'],
-                'next': meta['nextpage'],
-                'cur': meta['curpage'],
-                'searchKey': key
-            }
+            "data": list_clear,
+            "page": {
+                "size": meta["sum"],
+                "next": meta["nextpage"],
+                "cur": meta["curpage"],
+                "searchKey": key,
+            },
         }
 
     def getQQMusicMatchSong(self, name):
@@ -256,61 +267,61 @@ class QQMusicApi:
             format = ""
             qStr = ""
             fsize = 0
-            mid = _id['media_mid']
-            if int(_id['size_hires']) != 0:
+            mid = _id["media_mid"]
+            if int(_id["size_hires"]) != 0:
                 # 高解析无损音质
                 code = "RS01"
                 format = "flac"
                 qStr = "高解析无损 Hi-Res"
-                fsize = int(_id['size_hires'])
-            elif int(_id['size_flac']) != 0:
+                fsize = int(_id["size_hires"])
+            elif int(_id["size_flac"]) != 0:
                 isEnc = False  # 这句代码是逆向出来的 暂时无效
-                if (isEnc):
+                if isEnc:
                     code = "F0M0"
                     format = "mflac"
                 else:
                     code = "F000"
                     format = "flac"
                 qStr = "无损品质 FLAC"
-                fsize = int(_id['size_flac'])
-            elif int(_id['size_320mp3']) != 0:
+                fsize = int(_id["size_flac"])
+            elif int(_id["size_320mp3"]) != 0:
                 code = "M800"
                 format = "mp3"
                 qStr = "超高品质 320kbps"
-                fsize = int(_id['size_320mp3'])
-            elif int(_id['size_192ogg']) != 0:
+                fsize = int(_id["size_320mp3"])
+            elif int(_id["size_192ogg"]) != 0:
                 isEnc = False  # 这句代码是逆向出来的 暂时无效
-                if (isEnc):
+                if isEnc:
                     code = "O6M0"
                     format = "mgg"
                 else:
                     code = "O600"
                     format = "ogg"
                 qStr = "高品质 OGG"
-                fsize = int(_id['size_192ogg'])
-            elif int(_id['size_128mp3']) != 0:
+                fsize = int(_id["size_192ogg"])
+            elif int(_id["size_128mp3"]) != 0:
                 isEnc = False  # 这句代码是逆向出来的 暂时无效
-                if (isEnc):
+                if isEnc:
                     code = "O4M0"
                     format = "mgg"
                 else:
                     code = "M500"
                     format = "mp3"
                 qStr = "标准品质 128kbps"
-                fsize = int(_id['size_128mp3'])
-            elif int(_id['size_96aac']) != 0:
+                fsize = int(_id["size_128mp3"])
+            elif int(_id["size_96aac"]) != 0:
                 code = "C400"
                 format = "m4a"
                 qStr = "低品质 96kbps"
-                fsize = int(_id['size_96aac'])
+                fsize = int(_id["size_96aac"])
             else:
                 code = ""
                 format = ""
                 qStr = ""
                 fsize = 0
 
-            albumName = str(i["album"]['title']).strip(" ")
-            if albumName == '':
+            albumName = str(i["album"]["title"]).strip(" ")
+            if albumName == "":
                 albumName = "未分类专辑"
 
             # 开始检查歌曲过滤显示
@@ -318,26 +329,28 @@ class QQMusicApi:
             flacName = i["title"]
 
             time_publish = i["time_public"]
-            if time_publish == '':
+            if time_publish == "":
                 time_publish = ""
 
             # 通过检查 将歌曲放入歌曲池展示给用户 未通过检查的歌曲将被放弃并且不再显示
-            songs.append({
-                'prefix': code,
-                'extra': format,
-                'notice': qStr,
-                'mid': mid,
-                'musicid': i['id'],
-                'id': i['mid'],
-                'size': f"%.2fMB" % (fsize / 1024 / 1024),
-                'name': flacName,
-                'artist': singer,
-                'album': albumName,
-                "album_id": i["album"]['mid'],
-                'year': time_publish,
-                'readableText': f'{time_publish} {singer} - {i["title"]} | {qStr}',
-                "album_img": QQMUSIC_SONG_COVER.format(id=i["album"]['mid'])
-            })
+            songs.append(
+                {
+                    "prefix": code,
+                    "extra": format,
+                    "notice": qStr,
+                    "mid": mid,
+                    "musicid": i["id"],
+                    "id": i["mid"],
+                    "size": f"%.2fMB" % (fsize / 1024 / 1024),
+                    "name": flacName,
+                    "artist": singer,
+                    "album": albumName,
+                    "album_id": i["album"]["mid"],
+                    "year": time_publish,
+                    "readableText": f'{time_publish} {singer} - {i["title"]} | {qStr}',
+                    "album_img": QQMUSIC_SONG_COVER.format(id=i["album"]["mid"]),
+                }
+            )
         # 这部分其实可以只返回songs 但是代码我懒得改了 反正又不是不能用=v=
         return songs
 
@@ -352,7 +365,7 @@ class QQMusicApi:
         返回:
 
         """
-        u = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
+        u = "https://u.y.qq.com/cgi-bin/musicu.fcg"
 
         # 这里有两种格式 一种是纯数字 一种是mid 所以判断是否可被int即可
 
@@ -363,28 +376,43 @@ class QQMusicApi:
             sid = 0
             mid = _id
 
-        d = {"get_song_detail": {"module": "music.pf_song_detail_svr", "method": "get_song_detail",
-                                 "param": {"song_id": sid, "song_mid": mid, "song_type": 0}},
-             "comm": {"g_tk": 0, "uin": "", "format": "json", "ct": 6, "cv": 80600,
-                      "platform": "wk_v17", "uid": "", "guid": self.getUUID()}}
+        d = {
+            "get_song_detail": {
+                "module": "music.pf_song_detail_svr",
+                "method": "get_song_detail",
+                "param": {"song_id": sid, "song_mid": mid, "song_type": 0},
+            },
+            "comm": {
+                "g_tk": 0,
+                "uin": "",
+                "format": "json",
+                "ct": 6,
+                "cv": 80600,
+                "platform": "wk_v17",
+                "uid": "",
+                "guid": self.getUUID(),
+            },
+        }
 
         r = self.getQQServersCallback(u, 1, d)
         r = r.json()
         # print(r)
-        get_song_detail = r['get_song_detail']
-        if get_song_detail['code'] == 0:
-            i = get_song_detail['data']['track_info']
-            lst = [{
-                'album': i['album'],
-                'docid': '无',
-                'id': i['id'],
-                'mid': i['mid'],
-                'name': i['title'],
-                'singer': i['singer'],
-                'time_public': i['time_public'],
-                'title': i['title'],
-                'file': i['file'],
-            }]
+        get_song_detail = r["get_song_detail"]
+        if get_song_detail["code"] == 0:
+            i = get_song_detail["data"]["track_info"]
+            lst = [
+                {
+                    "album": i["album"],
+                    "docid": "无",
+                    "id": i["id"],
+                    "mid": i["mid"],
+                    "name": i["title"],
+                    "singer": i["singer"],
+                    "time_public": i["time_public"],
+                    "title": i["title"],
+                    "file": i["file"],
+                }
+            ]
         else:
             lst = []
         # 数据清洗,去掉搜索结果中多余的数据
@@ -396,11 +424,6 @@ class QQMusicApi:
         #   cur  当前搜索结果页码
         # }
         return {
-            'data': lst,
-            'page': {
-                'size': len(lst),
-                'next': "1",
-                'cur': "1",
-                'searchKey': ""
-            }
+            "data": lst,
+            "page": {"size": len(lst), "next": "1", "cur": "1", "searchKey": ""},
         }

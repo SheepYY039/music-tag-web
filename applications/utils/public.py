@@ -1,4 +1,5 @@
 from json import loads
+
 from django.http import HttpResponse
 
 BASE_URL = "https://music.163.com/"
@@ -18,9 +19,7 @@ def saveFile(path, content, mode="w"):
 
 
 def getCookie():
-    return loads(
-        readFile("read", "cookies").replace("'", '"').encode()
-    )
+    return loads(readFile("read", "cookies").replace("'", '"').encode())
 
 
 def request_query(r, *args):
@@ -29,6 +28,7 @@ def request_query(r, *args):
         if type(txt) == int:
             return str(txt)
         return txt
+
     dic = {}
     try:
         info = loads(r.body)

@@ -1,34 +1,27 @@
-import {
-    validatenull
-} from './util.js'
+import { validatenull } from "./util.js";
 
 /**
  * 存储localStorage
  */
 export const setStore = (params = {}) => {
-    const {
-        name,
-        content
-    } = params
+    const { name, content } = params;
     const obj = {
         dataType: typeof content,
         content: content,
-        datetime: new Date().getTime()
-    }
-    window.localStorage.setItem(name, JSON.stringify(obj))
-}
+        datetime: new Date().getTime(),
+    };
+    window.localStorage.setItem(name, JSON.stringify(obj));
+};
 /**
  * 获取localStorage
  */
 
 export const getStore = (params = {}) => {
-    const {
-        name
-    } = params
-    let obj = {}
-    obj = window.localStorage.getItem(name)
-    if (validatenull(obj)) return
-    obj = JSON.parse(obj)
+    const { name } = params;
+    let obj = {};
+    obj = window.localStorage.getItem(name);
+    if (validatenull(obj)) return;
+    obj = JSON.parse(obj);
     // if (obj.dataType == 'string') {
     //     content = obj.content;
     // } else if (obj.dataType == 'number') {
@@ -38,25 +31,21 @@ export const getStore = (params = {}) => {
     // } else if (obj.dataType == 'object') {
     //     content = obj.content;
     // }
-    return obj.content
-}
+    return obj.content;
+};
 /**
  * 删除localStorage
  */
-export const removeStore = (params = {}) => {
-
-}
+export const removeStore = (params = {}) => {};
 
 /**
  * 获取全部localStorage
  */
-export const getAllStore = (params = {}) => {
-
-}
+export const getAllStore = (params = {}) => {};
 
 /**
  * 清空全部localStorage
  */
 export const clearStore = (params = {}) => {
-    window.localStorage.clear()
-}
+    window.localStorage.clear();
+};

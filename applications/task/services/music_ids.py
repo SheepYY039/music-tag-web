@@ -11,11 +11,11 @@ from component import music_tag
 class MusicIDS:
     def __init__(self, folder=None, file=None):
         if folder:
-            folder = folder.encode('utf-8', 'replace').decode()
+            folder = folder.encode("utf-8", "replace").decode()
             self.file = music_tag.load_file(folder)
             self.path = folder
         elif file:
-            folder = file.filename.encode('utf-8', 'replace').decode()
+            folder = file.filename.encode("utf-8", "replace").decode()
             self.file = file
             self.path = folder
         self.artwork_w = 0
@@ -98,7 +98,7 @@ class MusicIDS:
 
     @property
     def duration(self):
-        return round(self.file['#length'].value, 2)
+        return round(self.file["#length"].value, 2)
 
     @property
     def size(self):
@@ -106,35 +106,35 @@ class MusicIDS:
 
     @property
     def suffix(self):
-        return self.file['#codec'].value
+        return self.file["#codec"].value
 
     @property
     def bit_rate(self):
-        return int(self.file['#bitrate'].value / 1000)
+        return int(self.file["#bitrate"].value / 1000)
 
     @property
     def track_number(self):
         try:
-            return self.file['tracknumber'].value
+            return self.file["tracknumber"].value
         except Exception:
             return self.file.mfile.tags["tracknumber"][0]
 
     @property
     def disc_number(self):
         try:
-            return self.file['discnumber'].value
+            return self.file["discnumber"].value
         except Exception:
             return self.file.mfile.tags["discnumber"][0]
 
     @property
     def title(self):
-        return self.file['title'].value
+        return self.file["title"].value
 
     @property
     def artwork(self):
         try:
             bs64_img = ""
-            artwork = self.file['artwork'].values
+            artwork = self.file["artwork"].values
             if artwork:
                 if isinstance(artwork[0], bytes):
                     # eval_artwork = literal_eval(artwork[0])

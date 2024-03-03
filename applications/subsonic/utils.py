@@ -18,7 +18,8 @@ def get_content_disposition(filename):
 
 
 def handle_serve(
-        track, user, _format=None, max_bitrate=None, proxy_media=True, download=False):
+    track, user, _format=None, max_bitrate=None, proxy_media=True, download=False
+):
     # we update the accessed_date
     now = datetime.now()
     track.accessed_date = now

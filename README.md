@@ -4,6 +4,7 @@
 
 『音乐标签』Web版是一款可以编辑歌曲的标题，专辑，艺术家，歌词，封面等信息的音乐标签编辑器程序， 支持FLAC, APE, WAV, AIFF, WV, TTA, MP3, M4A, OGG, MPC, OPUS, WMA, DSF,
 DFF, MP4等音频格式。
+
 <div class="column" align="middle">
    <img src="https://img.shields.io/github/stars/xhongc/music-tag-web?color=informational&label=Stars">
   <img src="https://img.shields.io/docker/pulls/xhongc/music_tag_web" alt="docker-pull-count" />
@@ -13,6 +14,7 @@ DFF, MP4等音频格式。
 # 🎉 Feature
 
 为什么开发web版？ 在使用Navidrome时，我的音乐都是在远程服务器上的，本地的Musictag和mp3tag不能满足我的需求， 我需要部署在远程服务器上去需改线上的音乐标签，相当于在使用Navidrome的边车应用。
+
 - 支持大部分音频格式元数据的查看、编辑和修改
 - 支持批量自动修改（刮削）音乐标签
 - 支持音乐指纹识别，即使没有元数据也可以识别音乐
@@ -29,8 +31,8 @@ DFF, MP4等音频格式。
 - 支持导出专辑封面文件，支持自定义上传专辑封面
 - 支持适配移动端 UI，支持手机端访问
 
-
 # 🦀 Show Project
+
 DEMO 地址账号密码为：admin/admin
 
 [【音乐标签Web｜Music Tag Web】](http://42.193.218.103:8002/#/)
@@ -41,6 +43,7 @@ DEMO 地址账号密码为：admin/admin
 2. docker-compose -f local.yml up
 
 # 💯 How to Use
+
 [【使用手册】](https://xiers-organization.gitbook.io/music-tag-web/)
 
 镜像已上传至Dockerhub 操作指南：
@@ -52,12 +55,12 @@ DEMO 地址账号密码为：admin/admin
 ### dokcer run
 
 2. `docker run -d -p 8001:8001 -v /path/to/your/music:/app/media -v /path/to/your/config:/app/data --restart=always xhongc/music_tag_web:latest`
-   
+
 或者 使用portainer stacks部署
-   ![img_1.png](img_1.png)
+![img_1.png](img_1.png)
 
 ```yaml
-version: '3'
+version: "3"
 
 services:
   music-tag:
@@ -71,12 +74,14 @@ services:
     command: /start
     restart: always
 ```
+
 ps. `/path/to/your/music` 改成你的音乐文件夹路径！`/path/to/your/config` 改为配置文件路径！
 
 3 访问在127.0.0.1:8001/admin 默认账号密码 admin/admin 修改默认密码
 ![img_7.png](img_7.png)
 
 # 📷 User Interface
+
 ![img_5.png](img_5.png)
 ![img_4.png](img_4.png)
 ![img_11.png](img_11.png)
@@ -84,8 +89,10 @@ ps. `/path/to/your/music` 改成你的音乐文件夹路径！`/path/to/your/con
 ![img_2.png](img_2.png)
 
 # 💬 Contact me
+
 如有什么意见需求，请先 star 后提出issues，我会满足你的需求，在我的能力范围内。
 issue 没及时看到的，可以加群讨论！(已经满200人，现在进群需手动拉，请添加我微信（备注：**Music Tag**），我会拉你进群。)
+
 <div>
 <img  src="/img_10.png" width="250">  &nbsp;
 </div>
@@ -95,14 +102,15 @@ issue 没及时看到的，可以加群讨论！(已经满200人，现在进群�
 
 [MusicTag 交流群](https://t.me/+oTffyBoNALM3Yzll)
 
-
 # 💸 赞助与支持
+
 如果您觉得 music-tag-web 对你有帮助，可以请作者喝杯咖啡。
 您的支持是我们更新软件的动力, 谢谢您! (｡･∀･)ﾉﾞ
 
 [➡ 爱发电](https://afdian.net/a/music-tag-web)
+
 <div>
-<img  src="/WechatIMG377.jpg" width="250" >  &nbsp; 
+<img  src="/WechatIMG377.jpg" width="250" >  &nbsp;
 <img  src="/img_8.png" width="250">  &nbsp;
 </div>
 
@@ -111,6 +119,7 @@ issue 没及时看到的，可以加群讨论！(已经满200人，现在进群�
 [![Star History Chart](https://api.star-history.com/svg?repos=xhongc/music-tag-web&type=Date)](https://star-history.com/#xhongc/music-tag-web&Date)
 
 # 免责声明
+
 禁止任何形式的商业用途，包括但不仅限于售卖/打赏/获利，不得使用本代码进行任何形式的牟利/贩卖/传播，再次强调仅供个人私下研究学习技术使用，不提供下载音乐本体！ 本项目仅以纯粹的技术目的去学习研究，如有侵犯到任何人的合法权利，请致信408737515@qq.com，我将在第一时间修改删除相关代码，谢谢！
 
 本项目基于 GPL V3.0 许可证发行，以下协议是对于 GPL V3.0 的补充，如有冲突，以以下协议为准。

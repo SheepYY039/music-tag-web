@@ -83,4 +83,6 @@ def patch_mysql():
 
     if not hasattr(mysql_base, "_Database"):
         mysql_base._Database = mysql_base.Database
-        mysql_base.Database = ManagerProxy(manage(mysql_base._Database, **POOL_SETTINGS))
+        mysql_base.Database = ManagerProxy(
+            manage(mysql_base._Database, **POOL_SETTINGS)
+        )

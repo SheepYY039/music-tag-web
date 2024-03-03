@@ -5,7 +5,6 @@ import mutagen.smf
 
 from component.music_tag.file import AudioFile
 
-
 # smf: standard midi file
 
 

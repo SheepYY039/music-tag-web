@@ -1,8 +1,10 @@
 def init_task(sender, **kwargs):
-    from django.contrib.auth.models import User
-    from applications.user.models import UserProfile
     import os
+
     from django.conf import settings
+    from django.contrib.auth.models import User
+
+    from applications.user.models import UserProfile
 
     if not User.objects.filter(username="admin").exists():
         User.objects.create_superuser("admin", "admin@qq.com", "admin")

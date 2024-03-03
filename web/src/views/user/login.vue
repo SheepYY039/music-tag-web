@@ -25,25 +25,25 @@
 </template>
 
 <script>
-    export default {
-        name: 'login',
-        data() {
-            return {
-                formData: {
-                    username: '',
-                    password: ''
-                }
-            }
-        },
-        methods: {
-            submitLogin() {
-                this.$api.Task.login(this.formData).then((res) => {
-                    this.setCookie('AUTHORIZATION', 'jwt ' + res.token, 7)
-                    this.$router.push({name: 'home'})
-                })
+export default {
+    name: 'login',
+    data() {
+        return {
+            formData: {
+                username: '',
+                password: ''
             }
         }
+    },
+    methods: {
+        submitLogin() {
+            this.$api.Task.login(this.formData).then((res) => {
+                this.setCookie('AUTHORIZATION', 'jwt ' + res.token, 7)
+                this.$router.push({ name: 'home' })
+            })
+        }
     }
+}
 </script>
 
 <style scoped>
@@ -98,8 +98,8 @@
     transition: .5s;
 }
 
-.login-box .user-box input:focus ~ label,
-.login-box .user-box input:valid ~ label {
+.login-box .user-box input:focus~label,
+.login-box .user-box input:valid~label {
     top: -20px;
     left: 0;
     color: #465e65;
@@ -149,7 +149,8 @@
         left: -100%;
     }
 
-    50%, 100% {
+    50%,
+    100% {
         left: 100%;
     }
 }
@@ -169,7 +170,8 @@
         top: -100%;
     }
 
-    50%, 100% {
+    50%,
+    100% {
         top: 100%;
     }
 }
@@ -189,7 +191,8 @@
         right: -100%;
     }
 
-    50%, 100% {
+    50%,
+    100% {
         right: 100%;
     }
 }
@@ -209,7 +212,8 @@
         bottom: -100%;
     }
 
-    50%, 100% {
+    50%,
+    100% {
         bottom: 100%;
     }
 }

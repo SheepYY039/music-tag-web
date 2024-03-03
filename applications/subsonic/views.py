@@ -1,6 +1,7 @@
 """
 Documentation of Subsonic API can be found at http://www.subsonic.org/pages/api.jsp
 """
+
 import datetime
 
 from django.conf import settings
@@ -10,7 +11,15 @@ from rest_framework import permissions as rest_permissions
 from rest_framework import response, viewsets
 from rest_framework.decorators import action
 
-from applications.music.models import Artist, Album, Attachment, Track, Playlist, TrackFavorite
+from applications.music.models import (
+    Album,
+    Artist,
+    Attachment,
+    Playlist,
+    Track,
+    TrackFavorite,
+)
+
 from . import authentication, negotiation, serializers
 from .filters import AlbumList2FilterSet
 from .utils import handle_serve
@@ -89,7 +98,7 @@ class SubsonicViewSet(viewsets.GenericViewSet):
         url_path="getCoverArt",
     )
     def get_cover_art(self, request, *args, **kwargs):
-        """ 返回封面图片"""
+        """返回封面图片"""
         data = request.GET or request.POST
         the_id = data.get("id", "")
         if not the_id:
@@ -138,7 +147,7 @@ class SubsonicViewSet(viewsets.GenericViewSet):
         # path = get_file_path_view(cover)
         file_header = mapping["nginx"]
         # let the proxy set the content-type
-        r = response.Response({}, content_type='')
+        r = response.Response({}, content_type="")
         r[file_header] = cover.url
 
         return r
@@ -251,11 +260,15 @@ class SubsonicViewSet(viewsets.GenericViewSet):
     def get_genres(self, request, *args, **kwargs):
 
         data = {
-            "genres": {"genre": [{
-                "songCount": 0,
-                "albumCount": 0,
-                "value": "Rock",
-            }]}
+            "genres": {
+                "genre": [
+                    {
+                        "songCount": 0,
+                        "albumCount": 0,
+                        "value": "Rock",
+                    }
+                ]
+            }
         }
         return response.Response(data)
 
@@ -310,9 +323,7 @@ class SubsonicViewSet(viewsets.GenericViewSet):
             # http://www.subsonic.org/pages/api.jsp#getAlbumList2
             from_year = min(boundaries)
             to_year = max(boundaries)
-            queryset = queryset.filter(
-                max_year__gte=from_year, max_year__lte=to_year
-            )
+            queryset = queryset.filter(max_year__gte=from_year, max_year__lte=to_year)
             if boundaries[0] <= boundaries[1]:
                 queryset = queryset.order_by("max_year")
             else:
@@ -328,7 +339,7 @@ class SubsonicViewSet(viewsets.GenericViewSet):
             size = 50
 
         size = min(size, 500)
-        queryset = queryset[offset: offset + size]
+        queryset = queryset[offset : offset + size]
         data = {"albumList2": {"album": serializers.get_album_list2_data(queryset)}}
         return response.Response(data)
 
@@ -383,9 +394,7 @@ class SubsonicViewSet(viewsets.GenericViewSet):
             # http://www.subsonic.org/pages/api.jsp#getAlbumList2
             from_year = min(boundaries)
             to_year = max(boundaries)
-            queryset = queryset.filter(
-                max_year__gte=from_year, max_year__lte=to_year
-            )
+            queryset = queryset.filter(max_year__gte=from_year, max_year__lte=to_year)
             if boundaries[0] <= boundaries[1]:
                 queryset = queryset.order_by("max_year")
             else:
@@ -401,7 +410,7 @@ class SubsonicViewSet(viewsets.GenericViewSet):
             size = 50
 
         size = min(size, 500)
-        queryset = queryset[offset: offset + size]
+        queryset = queryset[offset : offset + size]
         data = {"albumList2": {"album": serializers.get_album_list2_data(queryset)}}
         return response.Response(data)
 
@@ -450,13 +459,12 @@ class SubsonicViewSet(viewsets.GenericViewSet):
                 "starred": "2013-11-02T12:30:00",
                 "child": [
                     {
-                        "id": "11"
-                        ,
+                        "id": "11",
                         "parent": "10",
                         "title": "Arrival",
                         "artist": "ABBA",
                         "isDir": "true",
-                        "coverArt": "22"
+                        "coverArt": "22",
                     },
                     {
                         "id": "12",
@@ -464,9 +472,9 @@ class SubsonicViewSet(viewsets.GenericViewSet):
                         "title": "Super Trouper",
                         "artist": "ABBA",
                         "isDir": "true",
-                        "coverArt": "23"
-                    }
-                ]
+                        "coverArt": "23",
+                    },
+                ],
             }
         }
         return response.Response(data)
@@ -502,7 +510,9 @@ class SubsonicViewSet(viewsets.GenericViewSet):
         req_data = request.GET or request.POST
         track = Track.objects.filter(id=req_data.get("id")).first()
         if not track:
-            return response.Response({"error": {"code": 70, "message": "Track not found."}})
+            return response.Response(
+                {"error": {"code": 70, "message": "Track not found."}}
+            )
         TrackFavorite.add(user=request.user, track=track)
         return response.Response({"status": "ok"})
 
@@ -511,7 +521,9 @@ class SubsonicViewSet(viewsets.GenericViewSet):
         req_data = request.GET or request.POST
         track = Track.objects.filter(id=req_data.get("id")).first()
         if not track:
-            return response.Response({"error": {"code": 70, "message": "Track not found."}})
+            return response.Response(
+                {"error": {"code": 70, "message": "Track not found."}}
+            )
         request.user.track_favorites.filter(track=track).delete()
         return response.Response({"status": "ok"})
 
@@ -522,12 +534,7 @@ class SubsonicViewSet(viewsets.GenericViewSet):
         url_path="getScanStatus",
     )
     def get_scan_status(self, request, *args, **kwargs):
-        data = {
-            "scanStatus": {
-                "scanning": False,
-                "count": "5422"
-            }
-        }
+        data = {"scanStatus": {"scanning": False, "count": "5422"}}
         return response.Response(data)
 
     @action(
@@ -537,10 +544,5 @@ class SubsonicViewSet(viewsets.GenericViewSet):
         url_path="startScan",
     )
     def start_scan(self, request, *args, **kwargs):
-        data = {
-            "scanStatus": {
-                "scanning": True,
-                "count": "5411"
-            }
-        }
+        data = {"scanStatus": {"scanning": True, "count": "5411"}}
         return response.Response(data)

@@ -66,16 +66,22 @@ class ConstantTemplate(object):
         if isinstance(data, list):
             ldata = [""] * len(data)
             for index, item in enumerate(data):
-                ldata[index] = ConstantTemplate(copy.deepcopy(item)).resolve_data(value_maps)
+                ldata[index] = ConstantTemplate(copy.deepcopy(item)).resolve_data(
+                    value_maps
+                )
             return ldata
         if isinstance(data, tuple):
             ldata = [""] * len(data)
             for index, item in enumerate(data):
-                ldata[index] = ConstantTemplate(copy.deepcopy(item)).resolve_data(value_maps)
+                ldata[index] = ConstantTemplate(copy.deepcopy(item)).resolve_data(
+                    value_maps
+                )
             return tuple(ldata)
         if isinstance(data, dict):
             for key, value in list(data.items()):
-                data[key] = ConstantTemplate(copy.deepcopy(value)).resolve_data(value_maps)
+                data[key] = ConstantTemplate(copy.deepcopy(value)).resolve_data(
+                    value_maps
+                )
             return data
         return data
 
@@ -111,7 +117,11 @@ class ConstantTemplate(object):
         templates = ConstantTemplate.get_string_templates(string)
 
         # TODO keep render return object, here only process simple situation
-        if len(templates) == 1 and templates[0] == string and deformat_constant_key(string) in value_maps:
+        if (
+            len(templates) == 1
+            and templates[0] == string
+            and deformat_constant_key(string) in value_maps
+        ):
             return value_maps[deformat_constant_key(string)]
 
         for tpl in templates:
@@ -126,7 +136,9 @@ class ConstantTemplate(object):
         # data.update(SANDBOX)
         data.update(value_maps)
         if not isinstance(template, str):
-            raise Exception("constant resolve error, template[%s] is not a string" % template)
+            raise Exception(
+                "constant resolve error, template[%s] is not a string" % template
+            )
         try:
             tm = Template(template)
         except (MakoException, SyntaxError) as e:
@@ -135,9 +147,11 @@ class ConstantTemplate(object):
         try:
             resolved = tm.render_unicode(**data)
         except Exception as e:
-            logger.error("constant content({}) is invalid, data({}), error: {}".format(template, data, e))
+            logger.error(
+                "constant content({}) is invalid, data({}), error: {}".format(
+                    template, data, e
+                )
+            )
             return template
         else:
             return resolved
-
-

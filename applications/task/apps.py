@@ -5,7 +5,7 @@ from applications.task.handlers import init_task
 
 
 class ProjectConfig(AppConfig):
-    name = 'applications.task'
+    name = "applications.task"
 
     def ready(self):
         post_migrate.connect(init_task, self)

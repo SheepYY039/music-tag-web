@@ -1,6 +1,6 @@
 import collections
 
-from django.db.models import Count, functions, Sum
+from django.db.models import Count, Sum, functions
 from rest_framework import serializers
 
 from applications.music.models import Track
@@ -92,7 +92,9 @@ class GetArtistSerializer(serializers.Serializer):
                 "artist": artist.name,
                 "created": to_subsonic_date(album.created_at),
                 "songCount": album.tracks.count(),
-                "duration": album.tracks.aggregate(duration_count=Sum("duration")).get("duration_count", 0)
+                "duration": album.tracks.aggregate(duration_count=Sum("duration")).get(
+                    "duration_count", 0
+                ),
             }
             if album.attachment_cover_id:
                 album_data["coverArt"] = f"al-{album.id}"
@@ -149,7 +151,9 @@ def get_album2_data(album):
         "name": album.name,
         "artist": album.artist.name,
         "created": to_subsonic_date(album.created_at),
-        "duration": album.tracks.aggregate(duration_count=Sum("duration")).get("duration_count", 0),
+        "duration": album.tracks.aggregate(duration_count=Sum("duration")).get(
+            "duration_count", 0
+        ),
         "playCount": 1,
     }
     if album.attachment_cover_id:
@@ -186,9 +190,8 @@ class GetSongSerializer(serializers.Serializer):
 
 def get_starred_tracks_data(favorites):
     by_track_id = {f.track_id: f for f in favorites}
-    tracks = (
-        Track.objects.filter(pk__in=by_track_id.keys())
-            .select_related("album__artist")
+    tracks = Track.objects.filter(pk__in=by_track_id.keys()).select_related(
+        "album__artist"
     )
     tracks = tracks.order_by("-created_at")
     data = []
@@ -219,8 +222,8 @@ def get_playlist_detail_data(playlist):
     data = get_playlist_data(playlist)
     qs = (
         playlist.playlist_tracks.select_related("track__album__artist")
-            .prefetch_related("track__uploads")
-            .order_by("index")
+        .prefetch_related("track__uploads")
+        .order_by("index")
     )
     data["entry"] = []
     for plt in qs:
@@ -274,15 +277,21 @@ def get_channel_data(channel, uploads):
         "id": str(channel.uuid),
         "url": channel.get_rss_url(),
         "title": channel.artist.name,
-        "description": channel.artist.description.as_plain_text
-        if channel.artist.description
-        else "",
-        "coverArt": f"at-{channel.artist.attachment_cover.uuid}"
-        if channel.artist.attachment_cover
-        else "",
-        "originalImageUrl": channel.artist.attachment_cover.url
-        if channel.artist.attachment_cover
-        else "",
+        "description": (
+            channel.artist.description.as_plain_text
+            if channel.artist.description
+            else ""
+        ),
+        "coverArt": (
+            f"at-{channel.artist.attachment_cover.uuid}"
+            if channel.artist.attachment_cover
+            else ""
+        ),
+        "originalImageUrl": (
+            channel.artist.attachment_cover.url
+            if channel.artist.attachment_cover
+            else ""
+        ),
         "status": "completed",
     }
     if uploads:
@@ -299,12 +308,14 @@ def get_channel_episode_data(upload, channel_id):
         "channelId": str(channel_id),
         "streamId": upload.track.id,
         "title": upload.track.name,
-        "description": upload.track.description.as_plain_text
-        if upload.track.description
-        else "",
-        "coverArt": f"at-{upload.track.attachment_cover.uuid}"
-        if upload.track.attachment_cover
-        else "",
+        "description": (
+            upload.track.description.as_plain_text if upload.track.description else ""
+        ),
+        "coverArt": (
+            f"at-{upload.track.attachment_cover.uuid}"
+            if upload.track.attachment_cover
+            else ""
+        ),
         "isDir": "false",
         "year": upload.track.creation_date.year,
         "publishDate": upload.track.creation_date.isoformat(),

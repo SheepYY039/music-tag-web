@@ -1,6 +1,6 @@
-from applications.task.utils import match_score, match_artist
 from concurrent.futures import ThreadPoolExecutor
 
+from applications.task.utils import match_artist, match_score
 from component import music_tag
 
 
@@ -11,6 +11,7 @@ class SmartTagClient:
 
     def run(self, resource, title):
         from applications.task.services.music_resource import MusicResource
+
         songs = MusicResource(resource).fetch_id3_by_title(title)
         for song in songs:
             song["resource"] = resource
@@ -26,7 +27,9 @@ class SmartTagClient:
         order_songs = []
         max_score = 0
         with ThreadPoolExecutor(max_workers=4) as pool:
-            results = pool.map(self.run, ["qmusic", "netease", "migu", "kugou"], [title] * 4)
+            results = pool.map(
+                self.run, ["qmusic", "netease", "migu", "kugou"], [title] * 4
+            )
 
         for songs in results:
             for song in songs:

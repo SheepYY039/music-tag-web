@@ -19,24 +19,25 @@ class ApiGenericMixin(object):
         if response.status_code == 403:
             pass
         if response.data is None:
-            response.data = {
-                'result': True,
-                'message': 'success',
-                'data': None
-            }
+            response.data = {"result": True, "message": "success", "data": None}
         elif isinstance(response.data, (list, tuple)):
             response.data = {
-                'result': True,
-                'message': 'success',
-                'data': response.data
+                "result": True,
+                "message": "success",
+                "data": response.data,
             }
-        elif isinstance(response.data, dict) and ('code' not in response.data and 'result' not in response.data):
+        elif isinstance(response.data, dict) and (
+            "code" not in response.data and "result" not in response.data
+        ):
             response.data = {
-                'result': True,
-                'message': 'success',
-                'data': response.data
+                "result": True,
+                "message": "success",
+                "data": response.data,
             }
-        if response.status_code == status.HTTP_204_NO_CONTENT and request.method == 'DELETE':
+        if (
+            response.status_code == status.HTTP_204_NO_CONTENT
+            and request.method == "DELETE"
+        ):
             response.status_code = status.HTTP_200_OK
 
         return super(ApiGenericMixin, self).finalize_response(
@@ -60,7 +61,12 @@ class ApiGatewayMixin(object):
             return response
 
         if response.data is None:
-            response.data = {"result": True, "code": 0, "message": "success", "data": []}
+            response.data = {
+                "result": True,
+                "code": 0,
+                "message": "success",
+                "data": [],
+            }
         elif isinstance(response.data, (list, tuple)):
             response.data = {
                 "result": True,
@@ -68,7 +74,9 @@ class ApiGatewayMixin(object):
                 "message": "success",
                 "data": response.data,
             }
-        elif isinstance(response.data, dict) and not ("code" in response.data and "result" in response.data):
+        elif isinstance(response.data, dict) and not (
+            "code" in response.data and "result" in response.data
+        ):
             response.data = {
                 "result": True,
                 "code": 0,
@@ -76,4 +84,6 @@ class ApiGatewayMixin(object):
                 "data": response.data,
             }
 
-        return super(ApiGatewayMixin, self).finalize_response(request, response, *args, **kwargs)
+        return super(ApiGatewayMixin, self).finalize_response(
+            request, response, *args, **kwargs
+        )

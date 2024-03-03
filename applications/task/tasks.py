@@ -5,18 +5,18 @@ import time
 import uuid
 from collections import defaultdict
 
-from component import music_tag
 from django.conf import settings
 from django.db import transaction
 
-from applications.music.models import Folder, Track, Album, Genre, Artist, Attachment
+from applications.music.models import Album, Artist, Attachment, Folder, Genre, Track
 from applications.subsonic.constants import AUDIO_EXTENSIONS_AND_MIMETYPE, COVER_TYPE
 from applications.task.constants import ALLOW_TYPE
-from applications.task.models import TaskRecord, Task
+from applications.task.models import Task, TaskRecord
 from applications.task.services.music_ids import MusicIDS
 from applications.task.services.music_resource import MusicResource
-from applications.task.services.scan_utils import ScanMusic, MusicInfo
-from applications.task.utils import folder_update_time, exists_dir, match_song
+from applications.task.services.scan_utils import MusicInfo, ScanMusic
+from applications.task.utils import exists_dir, folder_update_time, match_song
+from component import music_tag
 from django_vue_cli.celery_app import app
 
 
@@ -61,37 +61,43 @@ def full_scan_folder(sub_path=None):
             if sub_path:
                 full_scan_folder.delay(sub_path=sub_path)
             bulk_create.append(
-                Folder(**{
-                    "name": dir_data.split("/")[-1],
-                    "path": dir_data,
-                    "file_type": "folder",
-                    "uid": my_uuid,
-                    "parent_id": parent_uid
-                })
+                Folder(
+                    **{
+                        "name": dir_data.split("/")[-1],
+                        "path": dir_data,
+                        "file_type": "folder",
+                        "uid": my_uuid,
+                        "parent_id": parent_uid,
+                    }
+                )
             )
         else:
             suffix = dir_data.split(".")[-1]
             if suffix in dict(AUDIO_EXTENSIONS_AND_MIMETYPE):
                 my_uuid = get_uuid()
                 bulk_create.append(
-                    Folder(**{
-                        "name": dir_data.split("/")[-1],
-                        "path": dir_data,
-                        "file_type": "music",
-                        "uid": my_uuid,
-                        "parent_id": parent_uid
-                    })
+                    Folder(
+                        **{
+                            "name": dir_data.split("/")[-1],
+                            "path": dir_data,
+                            "file_type": "music",
+                            "uid": my_uuid,
+                            "parent_id": parent_uid,
+                        }
+                    )
                 )
             elif suffix in COVER_TYPE:
                 my_uuid = get_uuid()
                 bulk_create.append(
-                    Folder(**{
-                        "name": dir_data.split("/")[-1],
-                        "path": dir_data,
-                        "file_type": "image",
-                        "uid": my_uuid,
-                        "parent_id": parent_uid
-                    })
+                    Folder(
+                        **{
+                            "name": dir_data.split("/")[-1],
+                            "path": dir_data,
+                            "file_type": "image",
+                            "uid": my_uuid,
+                            "parent_id": parent_uid,
+                        }
+                    )
                 )
         if len(bulk_create) % 500 == 0:
             Folder.objects.bulk_create(bulk_create, batch_size=500)
@@ -184,7 +190,7 @@ def update_scan_folder(sub_path=None):
                     "uid": my_uuid,
                     "parent_id": parent_uid,
                     "updated_at": now_time,
-                    "state": "updated"
+                    "state": "updated",
                 }
             elif suffix in COVER_TYPE:
                 my_uuid = get_uuid()
@@ -194,7 +200,7 @@ def update_scan_folder(sub_path=None):
                     "uid": my_uuid,
                     "parent_id": parent_uid,
                     "updated_at": now_time,
-                    "state": "updated"
+                    "state": "updated",
                 }
             else:
                 continue
@@ -202,10 +208,15 @@ def update_scan_folder(sub_path=None):
     folder_lst = Folder.objects.filter(updated_at=now_time, file_type="folder")
     for folder in folder_lst:
         path_list = list(
-            Folder.objects.filter(parent_id=folder.uid).exclude(updated_at=now_time).values_list("path", flat=True))
+            Folder.objects.filter(parent_id=folder.uid)
+            .exclude(updated_at=now_time)
+            .values_list("path", flat=True)
+        )
         with transaction.atomic():
             Track.objects.filter(path__in=path_list).delete()
-            Folder.objects.filter(parent_id=folder.uid).exclude(updated_at=now_time).delete()
+            Folder.objects.filter(parent_id=folder.uid).exclude(
+                updated_at=now_time
+            ).delete()
 
     print("完成更新扫描！")
 
@@ -258,13 +269,16 @@ def batch_auto_tag_task(batch, source_list, select_mode):
             file_name = ".".join(each.split(".")[:-1])
             if file_type not in ALLOW_TYPE:
                 continue
-            bulk_set.append(TaskRecord(**{
-                "batch": batch,
-                "song_name": file_name,
-                "full_path": f"{folder.full_path}/{each}",
-                "icon": "icon-music",
-
-            }))
+            bulk_set.append(
+                TaskRecord(
+                    **{
+                        "batch": batch,
+                        "song_name": file_name,
+                        "full_path": f"{folder.full_path}/{each}",
+                        "icon": "icon-music",
+                    }
+                )
+            )
         TaskRecord.objects.bulk_create(bulk_set)
     task_list = TaskRecord.objects.filter(batch=batch).exclude(icon="icon-folder").all()
     for task in task_list:
@@ -281,25 +295,31 @@ def batch_auto_tag_task(batch, source_list, select_mode):
                 task.state = "success"
                 task.save()
                 parent_path = os.path.dirname(task.full_path)
-                Task.objects.update_or_create(full_path=task.full_path, defaults={
-                    "state": task.state,
-                    "parent_path": parent_path,
-                    "filename": os.path.basename(task.full_path),
-                    "song_name": task.song_name,
-                    "artist_name": task.artist_name,
-                })
+                Task.objects.update_or_create(
+                    full_path=task.full_path,
+                    defaults={
+                        "state": task.state,
+                        "parent_path": parent_path,
+                        "filename": os.path.basename(task.full_path),
+                        "song_name": task.song_name,
+                        "artist_name": task.artist_name,
+                    },
+                )
                 break
         if not is_match:
             task.state = "failed"
             task.save()
             parent_path = os.path.dirname(task.full_path)
-            Task.objects.update_or_create(full_path=task.full_path, defaults={
-                "state": task.state,
-                "parent_path": parent_path,
-                "filename": os.path.basename(task.full_path),
-                "song_name": task.song_name,
-                "artist_name": task.artist_name,
-            })
+            Task.objects.update_or_create(
+                full_path=task.full_path,
+                defaults={
+                    "state": task.state,
+                    "parent_path": parent_path,
+                    "filename": os.path.basename(task.full_path),
+                    "song_name": task.song_name,
+                    "artist_name": task.artist_name,
+                },
+            )
 
 
 def tidy_folder_task(music_path_list, tidy_config):

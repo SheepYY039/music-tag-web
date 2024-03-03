@@ -1,24 +1,24 @@
-
 ## Build Setup
 
->建议使用淘宝镜像源 https://registry.npmjs.org
+> 建议使用淘宝镜像源 https://registry.npmjs.org
 
-``` bash
+```bash
 npm config set registry http://registry.npm.taobao.org
 ```
->查看是否切换成功
 
+> 查看是否切换成功
 
-``` bash
+```bash
 npm get registry
 ```
->或者使用cnpm代替npm来进行依赖安装
 
-``` bash
+> 或者使用cnpm代替npm来进行依赖安装
+
+```bash
 npm install -g cnpm --registry=https://registry.npm.taobao.org
 ```
 
-``` bash
+```bash
 # 安装依赖
 npm install
 

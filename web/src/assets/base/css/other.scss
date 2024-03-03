@@ -39,11 +39,11 @@
     border: 1px solid #f7f7f7 !important;
 }
 
-.el-tooltip__popper[x-placement^=right] .popper__arrow {
+.el-tooltip__popper[x-placement^="right"] .popper__arrow {
     border-right-color: #f7f7f7;
 }
 
-.el-tooltip__popper[x-placement^=right] .popper__arrow:after {
+.el-tooltip__popper[x-placement^="right"] .popper__arrow:after {
     border-right-color: #f7f7f7;
 }
 
@@ -91,7 +91,6 @@
     left: 50%;
 }
 
-
 .ivu-modal-wrap {
     z-index: 3200 !important;
 }
@@ -101,11 +100,11 @@
 }
 
 .ivu-input-search {
-    background-color: #217FC3 !important;
+    background-color: #217fc3 !important;
 }
 
 .ivu-input-search:hover {
-    background-color: #446DB3 !important;
+    background-color: #446db3 !important;
 }
 
 .ivu-input:hover {
@@ -193,20 +192,22 @@
     color: red;
 }
 
-.ivu-input-group-append, .ivu-input-group-prepend {
+.ivu-input-group-append,
+.ivu-input-group-prepend {
     background-color: #217fc3 !important;
     color: #fff !important;
     font-size: 16px !important;
 }
 
 .ivu-input-search:hover {
-    background-color: #446DB3 !important;
+    background-color: #446db3 !important;
 }
 
 .ivu-input-group-append:hover {
 }
 
-.ivu-input-group-append .ivu-btn, .ivu-input-group-prepend .ivu-btn {
+.ivu-input-group-append .ivu-btn,
+.ivu-input-group-prepend .ivu-btn {
     color: inherit;
     margin: -5px -8px;
 }

@@ -1,5 +1,6 @@
-import requests
 import base64
+
+import requests
 
 from applications.task.services.acoust import AcoustidClient
 from applications.task.services.kugou import KugouClient
@@ -50,12 +51,19 @@ class NetEaseMusicClient:
     BASE_URL = "https://music.163.com/"
 
     def fetch_lyric(self, song_id):
-        data = send({"url": self.BASE_URL + "api/song/lyric?lv=-1&kv=-1&tv=-1",
-                     "params": {"id": song_id}}, "linuxapi").POST("")
+        data = send(
+            {
+                "url": self.BASE_URL + "api/song/lyric?lv=-1&kv=-1&tv=-1",
+                "params": {"id": song_id},
+            },
+            "linuxapi",
+        ).POST("")
         return data.json().get("lrc", {}).get("lyric")
 
     def fetch_id3_by_title(self, title):
-        data = send({'s': title, 'type': '1', 'limit': '10', 'offset': '0'}).POST("weapi/cloudsearch/get/web")
+        data = send({"s": title, "type": "1", "limit": "10", "offset": "0"}).POST(
+            "weapi/cloudsearch/get/web"
+        )
         try:
             songs = data.json().get("result", {}).get("songs", [])
         except Exception as e:
@@ -85,27 +93,30 @@ class NetEaseMusicClient:
 class MiGuMusicClient:
     BASE_URL = "https://m.music.migu.cn/"
     header = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0',
-        'Referer': 'https://m.music.migu.cn/'
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0",
+        "Referer": "https://m.music.migu.cn/",
     }
 
     def fetch_lyric(self, song_id):
-        url = f'https://music.migu.cn/v3/api/music/audioPlayer/getLyric?copyrightId={song_id}'
+        url = f"https://music.migu.cn/v3/api/music/audioPlayer/getLyric?copyrightId={song_id}"
         res = requests.get(url, headers=self.header)
         return res.json()["lyric"]
 
     def fetch_id3_by_title(self, title):
-        url = self.BASE_URL + f"migu/remoting/scr_search_tag?rows=10&type=2&keyword={title}&pgc=1"
+        url = (
+            self.BASE_URL
+            + f"migu/remoting/scr_search_tag?rows=10&type=2&keyword={title}&pgc=1"
+        )
         res = requests.get(url, headers=self.header)
         songs = res.json()["musics"]
         for song in songs:
-            song["id"] = song['copyrightId']
-            song["name"] = song['songName']
-            song["artist"] = song['singerName']
-            song["artist_id"] = song['singerId']
-            song["album"] = song['albumName']
-            song["album_id"] = song['albumId']
-            song["album_img"] = song['cover']
+            song["id"] = song["copyrightId"]
+            song["name"] = song["songName"]
+            song["artist"] = song["singerName"]
+            song["artist_id"] = song["singerId"]
+            song["album"] = song["albumName"]
+            song["album_id"] = song["albumId"]
+            song["album_img"] = song["cover"]
             song["year"] = ""
         return songs
 

@@ -1,10 +1,7 @@
 module.exports = {
-    "extends": [
-    ],
-    "plugins": [
-        "stylelint-scss"
-    ],
-    "rules": {
+    extends: [],
+    plugins: ["stylelint-scss"],
+    rules: {
         // http://stylelint.cn/user-guide/rules/
         // 要求在 at 规则之后有一个一个空格
         "at-rule-name-space-after": "always",
@@ -97,7 +94,7 @@ module.exports = {
         "function-name-case": "lower",
 
         // 指定缩进
-        "indentation": 4,
+        indentation: 4,
 
         // 长度为0时，禁止使用单位
         "length-zero-no-unit": true,
@@ -209,6 +206,6 @@ module.exports = {
         "unit-case": "lower",
 
         // 禁止使用未知单位
-        "unit-no-unknown": true
-    }
-}
+        "unit-no-unknown": true,
+    },
+};

@@ -29,7 +29,7 @@ class BlueException(Exception):
             "result": False,
             "code": self.ERROR_CODE,
             "message": self.message,
-            "data": self.render_data()
+            "data": self.render_data(),
         }
 
 

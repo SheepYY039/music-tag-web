@@ -6,13 +6,20 @@ import base64
 import mutagen.flac
 
 from component.music_tag import util
-from component.music_tag.file import Artwork, AudioFile, MetadataItem, TAG_MAP_ENTRY
+from component.music_tag.file import TAG_MAP_ENTRY, Artwork, AudioFile, MetadataItem
 
 
 def get_pictures(afile, norm_key):
-    artworks = [Artwork(p.data, width=p.width, height=p.height,
-                        fmt=p.mime.split('/')[-1], pic_type=p.type)
-                for p in afile.mfile.pictures]
+    artworks = [
+        Artwork(
+            p.data,
+            width=p.width,
+            height=p.height,
+            fmt=p.mime.split("/")[-1],
+            pic_type=p.type,
+        )
+        for p in afile.mfile.pictures
+    ]
     return MetadataItem(Artwork, None, artworks)
 
 
@@ -43,36 +50,41 @@ class FlacFile(AudioFile):
     mutagen_kls = mutagen.flac.FLAC
 
     _TAG_MAP = {
-        'tracktitle': TAG_MAP_ENTRY(getter='title', setter='title', type=str),
-        'artist': TAG_MAP_ENTRY(getter='artist', setter='artist', type=str),
-        'album': TAG_MAP_ENTRY(getter='album', setter='album', type=str),
-        'albumartist': TAG_MAP_ENTRY(getter='albumartist', setter='albumartist',
-                                     type=str),
-        'composer': TAG_MAP_ENTRY(getter='composer', setter='composer', type=str),
-        'tracknumber': TAG_MAP_ENTRY(getter='tracknumber', setter='tracknumber',
-                                     type=int),
-        'totaltracks': TAG_MAP_ENTRY(getter='tracktotal', setter='tracktotal',
-                                     type=int),
-        'discnumber': TAG_MAP_ENTRY(getter='discnumber', setter='discnumber',
-                                    type=int),
-        'totaldiscs': TAG_MAP_ENTRY(getter='disctotal', setter='disctotal',
-                                    type=int),
-        'genre': TAG_MAP_ENTRY(getter='genre', setter='genre', type=str),
-        'year': TAG_MAP_ENTRY(getter=('date', 'originaldate'),
-                              setter=('date', 'originaldate'),
-                              type=int, sanitizer=util.sanitize_year),
-        'lyrics': TAG_MAP_ENTRY(getter='lyrics', setter='lyrics', type=str),
-        'isrc': TAG_MAP_ENTRY(getter='isrc', setter='isrc', type=str),
-        'comment': TAG_MAP_ENTRY(getter='comment', setter='comment', type=str),
-        'compilation': TAG_MAP_ENTRY(getter='compilation', setter='compilation',
-                                     type=int, sanitizer=util.sanitize_bool),
-
-        'artwork': TAG_MAP_ENTRY(getter=get_pictures, setter=set_pictures,
-                                 remover=rm_pictures,
-                                 type=Artwork),
-
-        '#codec': TAG_MAP_ENTRY(getter=lambda afile, norm_key: 'flac',
-                                type=str),
+        "tracktitle": TAG_MAP_ENTRY(getter="title", setter="title", type=str),
+        "artist": TAG_MAP_ENTRY(getter="artist", setter="artist", type=str),
+        "album": TAG_MAP_ENTRY(getter="album", setter="album", type=str),
+        "albumartist": TAG_MAP_ENTRY(
+            getter="albumartist", setter="albumartist", type=str
+        ),
+        "composer": TAG_MAP_ENTRY(getter="composer", setter="composer", type=str),
+        "tracknumber": TAG_MAP_ENTRY(
+            getter="tracknumber", setter="tracknumber", type=int
+        ),
+        "totaltracks": TAG_MAP_ENTRY(
+            getter="tracktotal", setter="tracktotal", type=int
+        ),
+        "discnumber": TAG_MAP_ENTRY(getter="discnumber", setter="discnumber", type=int),
+        "totaldiscs": TAG_MAP_ENTRY(getter="disctotal", setter="disctotal", type=int),
+        "genre": TAG_MAP_ENTRY(getter="genre", setter="genre", type=str),
+        "year": TAG_MAP_ENTRY(
+            getter=("date", "originaldate"),
+            setter=("date", "originaldate"),
+            type=int,
+            sanitizer=util.sanitize_year,
+        ),
+        "lyrics": TAG_MAP_ENTRY(getter="lyrics", setter="lyrics", type=str),
+        "isrc": TAG_MAP_ENTRY(getter="isrc", setter="isrc", type=str),
+        "comment": TAG_MAP_ENTRY(getter="comment", setter="comment", type=str),
+        "compilation": TAG_MAP_ENTRY(
+            getter="compilation",
+            setter="compilation",
+            type=int,
+            sanitizer=util.sanitize_bool,
+        ),
+        "artwork": TAG_MAP_ENTRY(
+            getter=get_pictures, setter=set_pictures, remover=rm_pictures, type=Artwork
+        ),
+        "#codec": TAG_MAP_ENTRY(getter=lambda afile, norm_key: "flac", type=str),
     }
 
     def _ft_setter(self, key, md_val, appendable=True):

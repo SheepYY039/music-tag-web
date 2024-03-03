@@ -48,13 +48,15 @@ def exception_handler(exc, context):
             message_list = []
             # data type is in (list, dict)
             if isinstance(data, dict):
-                for (k, v) in data.items():
+                for k, v in data.items():
                     if isinstance(v, list):
                         # remove 'non_field_errors' key name
                         if k in (api_settings.NON_FIELD_ERRORS_KEY, "detail"):
                             message_list.extend([str(i) for i in v])
                         else:
-                            message_list.extend(["{0}: {1}".format(str(k), str(i)) for i in v])
+                            message_list.extend(
+                                ["{0}: {1}".format(str(k), str(i)) for i in v]
+                            )
                     else:
                         message_list.append(str(v))
             elif isinstance(data, list):
